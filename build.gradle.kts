@@ -1,4 +1,5 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
+import com.diffplug.spotless.LineEnding
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.quality.CheckstyleExtension
 import org.gradle.api.tasks.compile.JavaCompile
@@ -160,6 +161,7 @@ subprojects {
 }
 
 extensions.configure<SpotlessExtension> {
+    lineEndings = LineEnding.UNIX
     java {
         target("**/src/**/*.java")
         googleJavaFormat(

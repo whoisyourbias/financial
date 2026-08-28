@@ -2,6 +2,7 @@ package dev.whoisyourbias.financial.ledger;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Currency;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,7 +27,10 @@ public class LedgerAccountService {
     Objects.requireNonNull(currency, "currency must not be null");
     LedgerAccountEntity entity =
         new LedgerAccountEntity(
-            UUID.randomUUID(), accountType, currency.getCurrencyCode(), Instant.now(clock));
+            UUID.randomUUID(),
+            accountType,
+            currency.getCurrencyCode(),
+            Instant.now(clock).truncatedTo(ChronoUnit.MICROS));
     return toView(repository.saveAndFlush(entity));
   }
 
