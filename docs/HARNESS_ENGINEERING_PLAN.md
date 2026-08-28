@@ -5,14 +5,14 @@
 | 항목 | 값 |
 | --- | --- |
 | 상태 | APPROVED |
-| 구현 상태 | IMPLEMENTED_LOCAL_VERIFIED (CI_PENDING) |
+| 구현 상태 | IMPLEMENTED_CI_VERIFIED |
 | 기준일 | 2026-08-28 |
 | 적용 범위 | 저장소 공통 실행 하네스, 프로젝트 01 실행 골격, 후속 지식 하네스 |
 | 기본 원칙 | 에이전트 중립형, 로컬 우선, Fast/Full 2단계 검증, 명시적 증거 승격 |
 
 이 계획은 에이전트와 사람이 금융 백엔드 코드를 같은 명령으로 이해·수정·검증하도록 저장소가 소유하는 실행 규약을 정의합니다. Codex 전용 설정은 공통 명령과 지식 문서를 연결하는 얇은 어댑터로 제한합니다.
 
-`IMPLEMENTED_LOCAL_VERIFIED`는 macOS arm64 로컬 환경에서 Doctor/Fast/Full과 부정 경로를 확인했다는 뜻입니다. GitHub Actions의 Linux·Windows 결과와 branch protection 설정은 원격 저장소에서 확인하기 전까지 `CI_PENDING`입니다.
+`IMPLEMENTED_CI_VERIFIED`는 macOS arm64 로컬 환경의 Doctor/Fast/Full과 부정 경로뿐 아니라 GitHub Actions의 Linux·Windows Fast와 Linux Full까지 확인했다는 뜻입니다. 기본 브랜치는 `develop`이며 branch protection은 저장소 운영 설정으로 관리합니다.
 
 ## 0. 단계와 범위 경계
 
@@ -301,7 +301,7 @@ Vector database와 embedding은 프로젝트 11에서 retrieval 요구와 평가
 
 `.github/workflows/harness.yml`은 저장소의 Gradle task만 호출하며 별도 검증 로직을 복제하지 않습니다.
 
-- 기본 브랜치 `main` 대상 pull request에서 Linux·Windows `harnessFast`를 실행합니다.
+- 기본 브랜치 `develop` 대상 pull request와 `develop` push에서 Linux·Windows `harnessFast`를 실행합니다.
 - Linux에서는 `harnessFull`도 실행해 Docker와 PostgreSQL 통합 경로를 확인합니다.
 - concurrency group으로 같은 PR의 이전 실행을 취소합니다.
 - job timeout을 명시하고 무한 대기를 금지합니다.
@@ -351,8 +351,10 @@ Vector database와 embedding은 프로젝트 11에서 retrieval 요구와 평가
 - 같은 HEAD에서 `knowledgeExport`를 2회 실행해 SHA-256 동일성 확인
 - 격리된 실패 주입: 잘못된 catalog는 FAILED manifest를 남기고, Docker 불가 Full은 `dockerPreflight`에서 복구 문구와 함께 실패
 - `promoteHarnessEvidence` dirty worktree 거절 PASS. clean source SHA의 실제 evidence 승격은 기능 구현 commit 이후 별도 evidence commit에서 수행합니다.
+- [GitHub Actions run 33171452441](https://github.com/whoisyourbias/financial/actions/runs/33171452441): Linux·Windows Fast와 Linux Full PASS.
+- 병합 commit `ee8e563f0c390f0e4ca62d7d3de81be64b136e53`의 [GitHub Actions run 33171886490](https://github.com/whoisyourbias/financial/actions/runs/33171886490): Linux·Windows Fast와 Linux Full PASS.
 
-위 기록은 구현 중 로컬 실행 결과이며 아직 승격된 프로젝트 evidence가 아닙니다. Linux·Windows CI 결과와 clean source SHA manifest는 원격 실행 뒤 확인합니다.
+로컬 기록은 구현 중 실행 결과이며, 원격 CI 기록은 GitHub Actions run과 commit SHA로 추적합니다. 프로젝트 evidence로 승격된 결과는 `projects/<id>/evidence/` 아래의 manifest와 checksum을 기준으로 별도 검토합니다.
 
 ## 10. 알려진 한계와 후속 결정
 
