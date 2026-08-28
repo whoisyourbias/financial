@@ -673,8 +673,13 @@ fun registerManifestTask(command: String): TaskProvider<Task> {
                         ),
                 )
             val manifestFile = reportDirectory.resolve("manifest.json")
+            val manifestJson =
+                JsonOutput
+                    .prettyPrint(JsonOutput.toJson(manifest))
+                    .lineSequence()
+                    .joinToString("\n") { line -> line.trimEnd() }
             manifestFile.writeText(
-                JsonOutput.prettyPrint(JsonOutput.toJson(manifest)) + "\n",
+                manifestJson + "\n",
                 StandardCharsets.UTF_8,
             )
             logger.lifecycle("Harness manifest: {}", manifestFile.relativeTo(rootProject.rootDir))
