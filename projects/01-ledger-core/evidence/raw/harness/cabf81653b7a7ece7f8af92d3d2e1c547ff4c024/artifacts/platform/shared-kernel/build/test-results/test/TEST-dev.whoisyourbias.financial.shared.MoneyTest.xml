@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.whoisyourbias.financial.shared.MoneyTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-08-28T13:01:58.597Z" hostname="MacBook-Air-2.local" time="0.047">
+  <properties/>
+  <testcase name="rejectsDifferentCurrencies()" classname="dev.whoisyourbias.financial.shared.MoneyTest" time="0.012"/>
+  <testcase name="rejectsNegationOverflow()" classname="dev.whoisyourbias.financial.shared.MoneyTest" time="0.002"/>
+  <testcase name="rejectsAdditionOverflow()" classname="dev.whoisyourbias.financial.shared.MoneyTest" time="0.0"/>
+  <testcase name="addsAmountsWithTheSameCurrency()" classname="dev.whoisyourbias.financial.shared.MoneyTest" time="0.002"/>
+  <testcase name="supportsSignedValues()" classname="dev.whoisyourbias.financial.shared.MoneyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

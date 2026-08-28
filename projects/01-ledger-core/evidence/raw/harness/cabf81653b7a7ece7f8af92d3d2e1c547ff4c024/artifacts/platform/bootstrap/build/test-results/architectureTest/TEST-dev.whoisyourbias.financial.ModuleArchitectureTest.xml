@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.whoisyourbias.financial.ModuleArchitectureTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-08-28T13:02:01.306Z" hostname="MacBook-Air-2.local" time="0.897">
+  <properties/>
+  <testcase name="modulesOutsideLedgerDoNotAccessPersistenceTypes()" classname="dev.whoisyourbias.financial.ModuleArchitectureTest" time="0.036"/>
+  <testcase name="sharedKernelDoesNotDependOnLedgerOrBootstrap()" classname="dev.whoisyourbias.financial.ModuleArchitectureTest" time="0.001"/>
+  <testcase name="ledgerDoesNotDependOnBootstrap()" classname="dev.whoisyourbias.financial.ModuleArchitectureTest" time="0.005"/>
+  <system-out><![CDATA[13:02:01.330 [Test worker] INFO com.tngtech.archunit.core.PluginLoader -- Detected Java version 21.0.11
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
