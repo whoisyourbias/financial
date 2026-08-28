@@ -802,7 +802,11 @@ tasks.register("promoteHarnessEvidence") {
         val promotable =
             artifacts
                 .map { it as Map<*, *> }
-                .filter { it["path"].toString().contains("/build/test-results/") }
+                .filter { artifact ->
+                    val relativePath = artifact["path"].toString()
+                    relativePath.contains("build/test-results/") ||
+                        relativePath == "build/reports/harness/migration-upgrade-status.txt"
+                }
         promotable.forEach { artifact ->
             val relativePath = artifact["path"].toString()
             val source = rootProject.file(relativePath)
@@ -834,7 +838,7 @@ tasks.register("promoteHarnessEvidence") {
             }
         if (!existing.contains(heading)) {
             val rows =
-                artifacts.joinToString("\n") { item ->
+                artifacts.joinToString("\n|") { item ->
                     val artifact = item as Map<*, *>
                     "| `${artifact["path"]}` | `${artifact["sha256"]}` | ${artifact["size"]} |"
                 }
