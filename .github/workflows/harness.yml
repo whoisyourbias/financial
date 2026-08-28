@@ -80,6 +80,7 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: gradle
+          cache-read-only: true
           cache-dependency-path: |
             gradle/wrapper/gradle-wrapper.properties
             gradle/verification-metadata.xml
