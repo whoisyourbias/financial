@@ -1,0 +1,452 @@
+documents:
+  - id: agents
+    title: "저장소 작업 지침"
+    path: AGENTS.md
+    kind: policy
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: master-plan
+    title: "6개월 AI 금융 백엔드 마스터플랜"
+    path: MASTER_PLAN.md
+    kind: plan
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: repository-readme
+    title: "AI-Native Financial Backend Lab"
+    path: README.md
+    kind: domain
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: contracts-readme
+    title: "contracts — README"
+    path: contracts/README.md
+    kind: domain
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: docs-architecture-evolution
+    title: "docs — ARCHITECTURE EVOLUTION"
+    path: docs/ARCHITECTURE_EVOLUTION.md
+    kind: architecture
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: docs-evaluation-gates
+    title: "docs — EVALUATION GATES"
+    path: docs/EVALUATION_GATES.md
+    kind: domain
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: docs-evidence-policy
+    title: "docs — EVIDENCE POLICY"
+    path: docs/EVIDENCE_POLICY.md
+    kind: policy
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: docs-harness-engineering-plan
+    title: "docs — HARNESS ENGINEERING PLAN"
+    path: docs/HARNESS_ENGINEERING_PLAN.md
+    kind: plan
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: [codex-agents, spring-boot-4-1, gradle-9-7-1, postgresql-18-6, testcontainers-2-0-5, github-actions-secure-use]
+    evidenceRefs: []
+  - id: docs-market-alignment
+    title: "docs — MARKET ALIGNMENT"
+    path: docs/MARKET_ALIGNMENT.md
+    kind: domain
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: docs-tech-baseline
+    title: "docs — TECH BASELINE"
+    path: docs/TECH_BASELINE.md
+    kind: policy
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: docs-domain-agents
+    title: "docs — domain — AGENTS"
+    path: docs/domain/AGENTS.md
+    kind: policy
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: frontend-agents
+    title: "frontend — AGENTS"
+    path: frontend/AGENTS.md
+    kind: policy
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: frontend-readme
+    title: "frontend — README"
+    path: frontend/README.md
+    kind: domain
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: platform-agents
+    title: "platform — AGENTS"
+    path: platform/AGENTS.md
+    kind: policy
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-01-ledger-core-exit-criteria
+    title: "01-ledger-core 종료 기준"
+    path: projects/01-ledger-core/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["01"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-01-ledger-core-plan
+    title: "01-ledger-core 구현 계획"
+    path: projects/01-ledger-core/PLAN.md
+    kind: plan
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["01"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-02-transfer-concurrency-exit-criteria
+    title: "02-transfer-concurrency 종료 기준"
+    path: projects/02-transfer-concurrency/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["02"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-02-transfer-concurrency-plan
+    title: "02-transfer-concurrency 구현 계획"
+    path: projects/02-transfer-concurrency/PLAN.md
+    kind: plan
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["02"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-03-reliable-events-exit-criteria
+    title: "03-reliable-events 종료 기준"
+    path: projects/03-reliable-events/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["03"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-03-reliable-events-plan
+    title: "03-reliable-events 구현 계획"
+    path: projects/03-reliable-events/PLAN.md
+    kind: plan
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["03"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-04-reconciliation-batch-exit-criteria
+    title: "04-reconciliation-batch 종료 기준"
+    path: projects/04-reconciliation-batch/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["04"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-04-reconciliation-batch-plan
+    title: "04-reconciliation-batch 구현 계획"
+    path: projects/04-reconciliation-batch/PLAN.md
+    kind: plan
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["04"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-05-security-audit-exit-criteria
+    title: "05-security-audit 종료 기준"
+    path: projects/05-security-audit/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["05"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-05-security-audit-plan
+    title: "05-security-audit 구현 계획"
+    path: projects/05-security-audit/PLAN.md
+    kind: plan
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["05"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-06-operability-cloud-exit-criteria
+    title: "06-operability-cloud 종료 기준"
+    path: projects/06-operability-cloud/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["06"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-06-operability-cloud-plan
+    title: "06-operability-cloud 구현 계획"
+    path: projects/06-operability-cloud/PLAN.md
+    kind: plan
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["06"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-07-payment-lifecycle-exit-criteria
+    title: "07-payment-lifecycle 종료 기준"
+    path: projects/07-payment-lifecycle/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["07"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-07-payment-lifecycle-plan
+    title: "07-payment-lifecycle 구현 계획"
+    path: projects/07-payment-lifecycle/PLAN.md
+    kind: plan
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["07"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-08-partner-settlement-exit-criteria
+    title: "08-partner-settlement 종료 기준"
+    path: projects/08-partner-settlement/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["08"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-08-partner-settlement-plan
+    title: "08-partner-settlement 구현 계획"
+    path: projects/08-partner-settlement/PLAN.md
+    kind: plan
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["08"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-09-service-extraction-exit-criteria
+    title: "09-service-extraction 종료 기준"
+    path: projects/09-service-extraction/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["09"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-09-service-extraction-plan
+    title: "09-service-extraction 구현 계획"
+    path: projects/09-service-extraction/PLAN.md
+    kind: plan
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["09"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-10-fraud-detection-exit-criteria
+    title: "10-fraud-detection 종료 기준"
+    path: projects/10-fraud-detection/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["10"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-10-fraud-detection-plan
+    title: "10-fraud-detection 구현 계획"
+    path: projects/10-fraud-detection/PLAN.md
+    kind: plan
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["10"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-11-financial-rag-exit-criteria
+    title: "11-financial-rag 종료 기준"
+    path: projects/11-financial-rag/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["11"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-11-financial-rag-plan
+    title: "11-financial-rag 구현 계획"
+    path: projects/11-financial-rag/PLAN.md
+    kind: plan
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["11"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-12-responsible-agent-exit-criteria
+    title: "12-responsible-agent 종료 기준"
+    path: projects/12-responsible-agent/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["12"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: projects-12-responsible-agent-plan
+    title: "12-responsible-agent 구현 계획"
+    path: projects/12-responsible-agent/PLAN.md
+    kind: plan
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["12"]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: reviews-final-audit-plan
+    title: "reviews — FINAL AUDIT PLAN"
+    path: reviews/FINAL_AUDIT_PLAN.md
+    kind: review
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: reviews-plan-portfolio-review
+    title: "reviews — PLAN PORTFOLIO REVIEW"
+    path: reviews/PLAN_PORTFOLIO_REVIEW.md
+    kind: review
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []
+  - id: reviews-plan-redteam-review
+    title: "reviews — PLAN REDTEAM REVIEW"
+    path: reviews/PLAN_REDTEAM_REVIEW.md
+    kind: review
+    domains: [repository]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: [all]
+    sourceRefs: []
+    evidenceRefs: []

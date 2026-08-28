@@ -5,14 +5,14 @@
 | 항목 | 값 |
 | --- | --- |
 | 상태 | APPROVED |
-| 구현 상태 | NOT_STARTED |
+| 구현 상태 | IMPLEMENTED_LOCAL_VERIFIED (CI_PENDING) |
 | 기준일 | 2026-08-28 |
 | 적용 범위 | 저장소 공통 실행 하네스, 프로젝트 01 실행 골격, 후속 지식 하네스 |
 | 기본 원칙 | 에이전트 중립형, 로컬 우선, Fast/Full 2단계 검증, 명시적 증거 승격 |
 
 이 계획은 에이전트와 사람이 금융 백엔드 코드를 같은 명령으로 이해·수정·검증하도록 저장소가 소유하는 실행 규약을 정의합니다. Codex 전용 설정은 공통 명령과 지식 문서를 연결하는 얇은 어댑터로 제한합니다.
 
-`APPROVED`는 방향 승인을 뜻하며 구현 완료를 뜻하지 않습니다. 각 단계는 이 문서의 완료 조건과 실제 명령, 테스트, 증거가 일치한 뒤에만 완료로 판정합니다.
+`IMPLEMENTED_LOCAL_VERIFIED`는 macOS arm64 로컬 환경에서 Doctor/Fast/Full과 부정 경로를 확인했다는 뜻입니다. GitHub Actions의 Linux·Windows 결과와 branch protection 설정은 원격 저장소에서 확인하기 전까지 `CI_PENDING`입니다.
 
 ## 0. 단계와 범위 경계
 
@@ -124,14 +124,14 @@ successful harnessFull manifest
 | Database | PostgreSQL 18.6 |
 | Persistence | Spring Data JPA |
 | Schema | Flyway only |
-| Test | JUnit 5, Testcontainers, ArchUnit |
+| Test | JUnit Jupiter 6.0.3, Testcontainers 2.0.5, ArchUnit 1.5.0 |
 
 Spring Boot BOM이 관리하는 library version은 개별 선언하지 않습니다. BOM 밖의 plugin과 도구 버전은 명시적으로 고정하고, 버전 변경은 기능 변경과 분리합니다.
 
 ### 공급망 방어
 
 - wrapper의 distribution URL과 `distributionSha256Sum`을 추적하고 wrapper JAR checksum을 공식 값과 대조합니다.
-- 모든 configuration에 dependency locking을 적용하고 `gradle/verification-metadata.xml`에서 artifact와 plugin checksum·서명을 검증합니다.
+- 모든 configuration에 dependency locking을 적용하고 `gradle/verification-metadata.xml`과 저장소 keyring에서 artifact와 plugin checksum·서명을 검증합니다. 서명이 없거나 공개키 서버에서 키를 받지 못한 생성기 명시 항목은 고정 SHA-256으로 검증합니다.
 - dynamic version, version range, `SNAPSHOT`, `mavenLocal()`을 금지합니다.
 - repository와 plugin repository를 `settings.gradle.kts`에 중앙화하고 허용하지 않은 project-level repository를 실패시킵니다.
 - PostgreSQL image는 사람이 읽는 tag와 multi-architecture manifest digest를 함께 고정합니다. 실행 manifest에는 실제 architecture와 resolved image digest를 기록합니다.
@@ -301,7 +301,7 @@ Vector database와 embedding은 프로젝트 11에서 retrieval 요구와 평가
 
 `.github/workflows/harness.yml`은 저장소의 Gradle task만 호출하며 별도 검증 로직을 복제하지 않습니다.
 
-- `develop` 대상 pull request에서 Linux·Windows `harnessFast`를 실행합니다.
+- 기본 브랜치 `main` 대상 pull request에서 Linux·Windows `harnessFast`를 실행합니다.
 - Linux에서는 `harnessFull`도 실행해 Docker와 PostgreSQL 통합 경로를 확인합니다.
 - concurrency group으로 같은 PR의 이전 실행을 취소합니다.
 - job timeout을 명시하고 무한 대기를 금지합니다.
@@ -341,6 +341,19 @@ Vector database와 embedding은 프로젝트 11에서 retrieval 요구와 평가
 - generated JSONL과 test report는 Git 추적 대상이 아닙니다.
 - 단계 B 통합 뒤 `harnessFast`가 `knowledgeCheck`를 포함합니다.
 
+### 2026-08-28 로컬 확인 기록
+
+- `./gradlew harnessDoctor`, `./gradlew harnessFast`, `./gradlew harnessFull`: PASS
+- `./gradlew --offline harnessFast`: PASS
+- `:platform:bootstrap:integrationTest --rerun-tasks`: PostgreSQL 18.6 Fresh migration, JPA 저장·조회, Boot context PASS
+- Gradle TestKit: 역방향 project dependency와 ledger persistence type 직접 접근 거절 PASS
+- 지식 golden fixture: LF/CRLF 동일 출력, 중복 heading·동일 파일명 ID 분리, 긴 table·fenced block 보존, 깨진 anchor·잘못된 status 거절 PASS
+- 같은 HEAD에서 `knowledgeExport`를 2회 실행해 SHA-256 동일성 확인
+- 격리된 실패 주입: 잘못된 catalog는 FAILED manifest를 남기고, Docker 불가 Full은 `dockerPreflight`에서 복구 문구와 함께 실패
+- `promoteHarnessEvidence` dirty worktree 거절 PASS. clean source SHA의 실제 evidence 승격은 기능 구현 commit 이후 별도 evidence commit에서 수행합니다.
+
+위 기록은 구현 중 로컬 실행 결과이며 아직 승격된 프로젝트 evidence가 아닙니다. Linux·Windows CI 결과와 clean source SHA manifest는 원격 실행 뒤 확인합니다.
+
 ## 10. 알려진 한계와 후속 결정
 
 - 최초 dependency·toolchain 다운로드에는 network가 필요할 수 있으며 완전한 air-gapped bootstrap은 이번 범위가 아닙니다.
@@ -348,6 +361,7 @@ Vector database와 embedding은 프로젝트 11에서 retrieval 요구와 평가
 - Compose는 개발 편의, Testcontainers는 자동 검증이므로 두 환경의 성능 수치를 직접 비교하지 않습니다.
 - GitHub branch protection, AWS, container registry, 배포 IAM, Terraform state는 이 계획이 아니라 저장소 운영 설정과 프로젝트 06 ADR에서 결정합니다.
 - Testcontainers와 Compose image를 갱신할 때 tag뿐 아니라 digest, release note, 전후 Full 결과를 함께 기록합니다.
+- 일부 upstream artifact는 서명이 없거나 공개키 서버에서 키를 내려받지 못합니다. 해당 목록은 `verification-metadata.xml`의 `ignored-key` reason으로 가시화하고, 이 경우에도 생성·검토한 SHA-256 일치를 필수로 유지합니다.
 
 ## 공식 기준 자료
 

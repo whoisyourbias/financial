@@ -1,0 +1,22 @@
+# This is a Gradle generated file for dependency locking.
+# Manual edits can break the build and are not advised.
+# This file is expected to be part of source control.
+# To regenerate this file, run: ./gradlew :tools:dependencies --write-locks
+com.google.code.findbugs:jsr305:3.0.2=checkstyle
+com.google.errorprone:error_prone_annotations:2.47.0=checkstyle
+com.google.guava:failureaccess:1.0.3=checkstyle
+com.google.guava:guava:33.6.0-jre=checkstyle
+com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava=checkstyle
+com.google.j2objc:j2objc-annotations:3.1=checkstyle
+com.puppycrawl.tools:checkstyle:14.0.0=checkstyle
+commons-beanutils:commons-beanutils:1.11.0=checkstyle
+commons-collections:commons-collections:3.2.2=checkstyle
+info.picocli:picocli:4.7.7=checkstyle
+net.sf.saxon:Saxon-HE:12.9=checkstyle
+org.antlr:antlr4-runtime:4.13.2=checkstyle
+org.javassist:javassist:3.28.0-GA=checkstyle
+org.jspecify:jspecify:1.0.0=checkstyle
+org.reflections:reflections:0.10.2=checkstyle
+org.slf4j:slf4j-simple:2.0.18=checkstyle
+org.xmlresolver:xmlresolver:5.3.3=checkstyle
+empty=annotationProcessor,compileClasspath,runtimeClasspath,testAnnotationProcessor,testCompileClasspath,testRuntimeClasspath

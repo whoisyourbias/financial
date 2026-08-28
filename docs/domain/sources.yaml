@@ -1,0 +1,49 @@
+sources:
+  - id: codex-agents
+    title: Codex AGENTS.md
+    url: https://learn.chatgpt.com/docs/agent-configuration/agents-md
+    publisher: OpenAI
+    checkedAt: 2026-08-28
+    domains: [repository]
+    scope: Agent instruction discovery
+    storesOriginal: false
+  - id: spring-boot-4-1
+    title: Spring Boot system requirements
+    url: https://docs.spring.io/spring-boot/system-requirements.html
+    publisher: Broadcom
+    checkedAt: 2026-08-28
+    domains: [repository]
+    scope: Java and Gradle compatibility
+    storesOriginal: false
+  - id: gradle-9-7-1
+    title: Gradle 9.7.1 release notes
+    url: https://docs.gradle.org/9.7.1/release-notes.html
+    publisher: Gradle
+    checkedAt: 2026-08-28
+    domains: [repository]
+    scope: Build and wrapper version
+    storesOriginal: false
+  - id: postgresql-18-6
+    title: PostgreSQL 18.6 release notes
+    url: https://www.postgresql.org/docs/release/18.6/
+    publisher: PostgreSQL Global Development Group
+    checkedAt: 2026-08-28
+    domains: [repository]
+    scope: Database container version
+    storesOriginal: false
+  - id: testcontainers-2-0-5
+    title: Testcontainers for Java
+    url: https://java.testcontainers.org/
+    publisher: AtomicJar
+    checkedAt: 2026-08-28
+    domains: [repository]
+    scope: Ephemeral PostgreSQL integration testing
+    storesOriginal: false
+  - id: github-actions-secure-use
+    title: Secure use of GitHub Actions
+    url: https://docs.github.com/en/actions/reference/security/secure-use
+    publisher: GitHub
+    checkedAt: 2026-08-28
+    domains: [repository]
+    scope: Minimal CI permissions and action pinning
+    storesOriginal: false

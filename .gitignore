@@ -1,0 +1,11 @@
+.DS_Store
+.gradle/
+.idea/
+.vscode/
+**/build/
+out/
+*.iml
+*.log
+.env
+.env.*
+!.env.example

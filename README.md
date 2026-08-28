@@ -2,7 +2,7 @@
 
 > 1~3년차 Java/Spring 금융 백엔드 개발자를 목표로, 하나의 금융 플랫폼을 6개월 동안 단계적으로 진화시키는 포트폴리오 계획입니다.
 
-현재 상태는 **계획 수립 완료, 구현 전**입니다. 이 저장소의 숫자와 기술 표현은 구현·측정·검증이 끝나기 전까지 성과로 취급하지 않습니다.
+현재 상태는 **공통 하네스와 프로젝트 01 실행 골격 구현, 금융 기능 구현 전**입니다. `Money`, account migration·저장 smoke test는 하네스 검증용 최소 수직 절단이며 프로젝트 01의 journal·posting 완료를 의미하지 않습니다. 구현·측정·검증이 끝나지 않은 숫자와 기술 표현은 성과로 취급하지 않습니다.
 
 ## 이 포트폴리오가 증명하려는 것
 
@@ -37,6 +37,44 @@
 - 아키텍처 진화: [ARCHITECTURE_EVOLUTION.md](docs/ARCHITECTURE_EVOLUTION.md)
 - 증거 규칙: [EVIDENCE_POLICY.md](docs/EVIDENCE_POLICY.md)
 - 종료 평가: [EVALUATION_GATES.md](docs/EVALUATION_GATES.md)
+
+## 하네스 실행
+
+### 선행조건
+
+- Git
+- Java 17 이상으로 Gradle wrapper를 시작할 수 있는 환경
+- Full 검증과 로컬 DB 실행에는 Docker daemon
+
+프로젝트 compile과 test는 Foojay resolver가 제공하는 Eclipse Temurin Java 21 toolchain을 사용합니다. 최초 toolchain·dependency 다운로드에는 network가 필요할 수 있습니다.
+
+### 공개 명령
+
+```bash
+./gradlew harnessDoctor
+./gradlew harnessFast
+./gradlew harnessFull
+./gradlew knowledgeCheck
+./gradlew knowledgeExport
+./gradlew promoteHarnessEvidence -PtargetProject=01-ledger-core
+```
+
+- `harnessDoctor`: toolchain, wrapper, 공급망 metadata, Docker 상태 진단
+- `harnessFast`: format, strict compile, unit, architecture, knowledge 검증
+- `harnessFull`: Fast와 PostgreSQL 18.6·Flyway·JPA·Boot·packaging 검증
+- `knowledgeExport`: `build/knowledge/knowledge.jsonl` 생성
+- `promoteHarnessEvidence`: clean HEAD의 성공한 Full manifest를 지정 프로젝트 evidence로 명시적으로 승격
+
+Windows에서는 `./gradlew` 대신 `gradlew.bat`를 사용합니다. Docker가 꺼져 있어도 Fast는 실행 가능하며 Full은 container test 전에 조치가 포함된 오류로 실패합니다.
+
+로컬 PostgreSQL은 다음 명령으로 관리합니다.
+
+```bash
+./gradlew localUp
+./gradlew localDown
+```
+
+개발 volume까지 삭제하는 `localReset`은 명시적으로 실행할 때만 사용합니다. 상세 계약과 완료 조건은 [하네스 엔지니어링 구현 계획](docs/HARNESS_ENGINEERING_PLAN.md)을 따릅니다.
 
 ## 증거 우선 원칙
 
