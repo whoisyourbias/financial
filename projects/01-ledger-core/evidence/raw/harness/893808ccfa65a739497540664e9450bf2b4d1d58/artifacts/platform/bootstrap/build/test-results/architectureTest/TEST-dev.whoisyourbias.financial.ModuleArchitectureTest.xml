@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.whoisyourbias.financial.ModuleArchitectureTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-08-28T13:05:52.958Z" hostname="MacBook-Air-2.local" time="0.924">
+  <properties/>
+  <testcase name="modulesOutsideLedgerDoNotAccessPersistenceTypes()" classname="dev.whoisyourbias.financial.ModuleArchitectureTest" time="0.025"/>
+  <testcase name="sharedKernelDoesNotDependOnLedgerOrBootstrap()" classname="dev.whoisyourbias.financial.ModuleArchitectureTest" time="0.001"/>
+  <testcase name="ledgerDoesNotDependOnBootstrap()" classname="dev.whoisyourbias.financial.ModuleArchitectureTest" time="0.003"/>
+</testsuite>

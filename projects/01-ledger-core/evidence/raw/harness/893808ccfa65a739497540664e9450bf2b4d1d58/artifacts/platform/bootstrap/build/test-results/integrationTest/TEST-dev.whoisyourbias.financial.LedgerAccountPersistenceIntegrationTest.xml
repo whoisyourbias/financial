@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.whoisyourbias.financial.LedgerAccountPersistenceIntegrationTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-08-28T13:05:59.261Z" hostname="MacBook-Air-2.local" time="3.194">
+  <properties/>
+  <testcase name="startsBootContextAndAppliesFreshMigration()" classname="dev.whoisyourbias.financial.LedgerAccountPersistenceIntegrationTest" time="0.265"/>
+  <testcase name="savesAndReadsAnAccountThroughTheLedgerBoundary()" classname="dev.whoisyourbias.financial.LedgerAccountPersistenceIntegrationTest" time="0.064"/>
+</testsuite>
