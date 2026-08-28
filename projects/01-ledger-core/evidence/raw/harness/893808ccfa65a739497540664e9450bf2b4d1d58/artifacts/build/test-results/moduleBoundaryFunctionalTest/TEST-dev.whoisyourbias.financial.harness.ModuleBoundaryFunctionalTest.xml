@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.whoisyourbias.financial.harness.ModuleBoundaryFunctionalTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-08-28T13:05:51.094Z" hostname="MacBook-Air-2.local" time="6.998">
+  <properties/>
+  <testcase name="rejectsDirectAccessToLedgerPersistenceTypes()" classname="dev.whoisyourbias.financial.harness.ModuleBoundaryFunctionalTest" time="3.892"/>
+  <testcase name="rejectsAReverseProjectDependency()" classname="dev.whoisyourbias.financial.harness.ModuleBoundaryFunctionalTest" time="3.1"/>
+</testsuite>

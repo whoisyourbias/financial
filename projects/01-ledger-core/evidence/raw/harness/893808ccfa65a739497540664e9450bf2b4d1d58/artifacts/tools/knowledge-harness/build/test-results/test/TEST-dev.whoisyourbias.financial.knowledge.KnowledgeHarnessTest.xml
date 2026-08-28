@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.whoisyourbias.financial.knowledge.KnowledgeHarnessTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-08-28T13:05:51.928Z" hostname="MacBook-Air-2.local" time="0.562">
+  <properties/>
+  <testcase name="rejectsUnsupportedStatuses()" classname="dev.whoisyourbias.financial.knowledge.KnowledgeHarnessTest" time="0.134"/>
+  <testcase name="matchesTheCrossPlatformGoldenChecksum()" classname="dev.whoisyourbias.financial.knowledge.KnowledgeHarnessTest" time="0.261"/>
+  <testcase name="exportsIdenticalBytesForEquivalentCrLfAndLfInputs()" classname="dev.whoisyourbias.financial.knowledge.KnowledgeHarnessTest" time="0.085"/>
+  <testcase name="keepsOversizedCodeAndTableBlocksIntact()" classname="dev.whoisyourbias.financial.knowledge.KnowledgeHarnessTest" time="0.016"/>
+  <testcase name="createsUniqueIdsForSameNamedFilesAndRepeatedHeadings()" classname="dev.whoisyourbias.financial.knowledge.KnowledgeHarnessTest" time="0.011"/>
+  <testcase name="rejectsBrokenHeadingAnchors()" classname="dev.whoisyourbias.financial.knowledge.KnowledgeHarnessTest" time="0.021"/>
+  <testcase name="rejectsVerifiedDocumentsWithoutSourceOrEvidence()" classname="dev.whoisyourbias.financial.knowledge.KnowledgeHarnessTest" time="0.009"/>
+</testsuite>

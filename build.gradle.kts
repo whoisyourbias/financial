@@ -69,6 +69,8 @@ tasks.withType<Test>().configureEach {
     systemProperty("user.timezone", "UTC")
     systemProperty("financial.repository.root", rootProject.projectDir.absolutePath)
     reports.junitXml.required.set(true)
+    reports.junitXml.includeSystemOutLog.set(false)
+    reports.junitXml.includeSystemErrLog.set(false)
     reports.html.required.set(true)
 }
 
@@ -156,6 +158,8 @@ subprojects {
         systemProperty("user.country", "US")
         systemProperty("user.timezone", "UTC")
         reports.junitXml.required.set(true)
+        reports.junitXml.includeSystemOutLog.set(false)
+        reports.junitXml.includeSystemErrLog.set(false)
         reports.html.required.set(true)
     }
 }

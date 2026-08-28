@@ -673,8 +673,13 @@ fun registerManifestTask(command: String): TaskProvider<Task> {
                         ),
                 )
             val manifestFile = reportDirectory.resolve("manifest.json")
+            val manifestJson =
+                JsonOutput
+                    .prettyPrint(JsonOutput.toJson(manifest))
+                    .lineSequence()
+                    .joinToString("\n") { line -> line.trimEnd() }
             manifestFile.writeText(
-                JsonOutput.prettyPrint(JsonOutput.toJson(manifest)) + "\n",
+                manifestJson + "\n",
                 StandardCharsets.UTF_8,
             )
             logger.lifecycle("Harness manifest: {}", manifestFile.relativeTo(rootProject.rootDir))
@@ -802,7 +807,11 @@ tasks.register("promoteHarnessEvidence") {
         val promotable =
             artifacts
                 .map { it as Map<*, *> }
-                .filter { it["path"].toString().contains("/build/test-results/") }
+                .filter { artifact ->
+                    val relativePath = artifact["path"].toString()
+                    relativePath.contains("build/test-results/") ||
+                        relativePath == "build/reports/harness/migration-upgrade-status.txt"
+                }
         promotable.forEach { artifact ->
             val relativePath = artifact["path"].toString()
             val source = rootProject.file(relativePath)
@@ -816,7 +825,9 @@ tasks.register("promoteHarnessEvidence") {
         }
 
         val sensitivePattern =
-            Regex("""(?i)(AKIA[0-9A-Z]{16}|gh[opusr]_[A-Za-z0-9_]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----)""")
+            Regex(
+                """(?i)(AKIA[0-9A-Z]{16}|gh[opusr]_[A-Za-z0-9_]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|/(?:Users|home)/[A-Za-z0-9._-]+|[A-Z]:\\Users\\[A-Za-z0-9._-]+)""",
+            )
         evidenceDirectory.walkTopDown().filter { it.isFile }.forEach { file ->
             if (sensitivePattern.containsMatchIn(file.readText(StandardCharsets.UTF_8))) {
                 throw GradleException("Potential secret detected in promoted evidence: ${file.name}")
@@ -834,7 +845,7 @@ tasks.register("promoteHarnessEvidence") {
             }
         if (!existing.contains(heading)) {
             val rows =
-                artifacts.joinToString("\n") { item ->
+                artifacts.joinToString("\n|") { item ->
                     val artifact = item as Map<*, *>
                     "| `${artifact["path"]}` | `${artifact["sha256"]}` | ${artifact["size"]} |"
                 }

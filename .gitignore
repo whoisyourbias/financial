@@ -3,6 +3,7 @@
 .idea/
 .vscode/
 **/build/
+!projects/*/evidence/**
 out/
 *.iml
 *.log
