@@ -2,11 +2,11 @@
 
 ## 계약과 상태
 
-- [ ] 가상계좌 발급 선택 계약과 `DEPOSIT_CALLBACK` 계약 테스트가 있다.
+- [ ] 가상계좌 발급의 다섯 필수값과 `DEPOSIT_CALLBACK`의 `secret`·`transactionKey` 계약 테스트가 있다.
 - [ ] 샌드박스 입금 API가 공개 경로와 분리된다.
 - [ ] 정확한 입금에서만 `WAITING_FOR_DEPOSIT → DONE`이 된다.
-- [ ] 같은 입금 참조번호가 분개·웹훅을 중복 생성하지 않는다.
-- [ ] 입금 전 취소와 입금 후 취소 규칙이 각각 테스트된다.
+- [ ] 같은 입금 참조번호와 두 웹훅의 교차 전달이 분개·알림을 중복 생성하지 않는다.
+- [ ] 입금 전 전액 취소·부분 취소 거절과 입금 후 환불계좌 정상·누락·유효성 실패가 각각 테스트된다.
 
 ## 대사와 복구
 
@@ -18,9 +18,9 @@
 
 ## 공통 증거 게이트
 
-- [ ] `evidence/manifest.schema.json`을 통과하는 manifest가 있다.
+- [ ] `projects/04-virtual-account-reconciliation/evidence/MANIFEST.md`가 `docs/EVIDENCE_POLICY.md`의 공통 manifest 계약과 `evidenceCheck`를 통과한다.
 - [ ] 실행 명령, Git SHA, 환경, 데이터 seed, 원시 결과가 연결되어 있다.
 - [ ] `./gradlew harnessFast`와 `./gradlew knowledgeCheck`가 통과한다.
-- [ ] Docker가 필요한 범위는 `./gradlew harnessFull` 결과 또는 미실행 사유가 있다.
+- [ ] Docker가 필요한 필수 범위는 `./gradlew harnessFull`이 통과한다. 미실행이면 사유를 기록하고 상태를 `HOLD`로 둔다.
 - [ ] 구현·재현하지 않은 결과를 `[검증됨]`이나 성과로 표현하지 않는다.
 - [ ] 실제 고객 데이터·자격증명·개인정보가 source, fixture, log, manifest에 없다.

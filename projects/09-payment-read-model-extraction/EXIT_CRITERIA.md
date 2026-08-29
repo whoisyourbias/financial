@@ -7,6 +7,7 @@
 - [ ] checkpoint 재구축 결과가 기준 체크섬과 일치한다.
 - [ ] read model 장애가 승인·취소 커밋을 막지 않는다.
 - [ ] schema 진화의 backward/forward 호환 테스트가 있다.
+- [ ] 필수 event set이 승인·취소로, 필수 조회가 paymentKey·orderId로 고정되고 입금·정산·fallback·추가 저장소는 확장으로 분리된다.
 
 ## 비교와 결정
 
@@ -18,9 +19,9 @@
 
 ## 공통 증거 게이트
 
-- [ ] `evidence/manifest.schema.json`을 통과하는 manifest가 있다.
+- [ ] `projects/09-payment-read-model-extraction/evidence/MANIFEST.md`가 `docs/EVIDENCE_POLICY.md`의 공통 manifest 계약과 `evidenceCheck`를 통과한다.
 - [ ] 실행 명령, Git SHA, 환경, 데이터 seed, 원시 결과가 연결되어 있다.
 - [ ] `./gradlew harnessFast`와 `./gradlew knowledgeCheck`가 통과한다.
-- [ ] Docker가 필요한 범위는 `./gradlew harnessFull` 결과 또는 미실행 사유가 있다.
+- [ ] Docker가 필요한 필수 범위는 `./gradlew harnessFull`이 통과한다. 미실행이면 사유를 기록하고 상태를 `HOLD`로 둔다.
 - [ ] 구현·재현하지 않은 결과를 `[검증됨]`이나 성과로 표현하지 않는다.
 - [ ] 실제 고객 데이터·자격증명·개인정보가 source, fixture, log, manifest에 없다.

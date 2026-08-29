@@ -30,7 +30,7 @@
 - `GET /v1/payments/orders/{orderId}`
 - `POST /v1/payments/{paymentKey}/cancel`
 - `POST /v1/virtual-accounts`
-- `PAYMENT_STATUS_CHANGED`, `CANCEL_STATUS_CHANGED`, `DEPOSIT_CALLBACK`
+- `PAYMENT_STATUS_CHANGED`, `DEPOSIT_CALLBACK`
 - Payment·Cancel·Error 객체, Basic 인증, `Idempotency-Key`, API 버전 규칙
 - 합성 KRW 카드·간편결제·가상계좌 시나리오
 
@@ -44,7 +44,7 @@
 
 ### 비범위
 
-- 빌링, 브랜드페이, 링크페이, 지급대행, 해외결제
+- 빌링, 브랜드페이, 링크페이, 지급대행, 해외결제와 해외 간편결제 취소·실패용 `CANCEL_STATUS_CHANGED`
 - 실제 카드번호·계좌번호·API credential과 실거래
 - 실제 카드망 전문, 가맹점 계약, 세금 신고와 규제 인증
 - 토스페이먼츠 비공개 내부 구조·조직·규모의 재현
@@ -58,14 +58,14 @@
 | 02 | 09-14 ~ 09-27 | 승인·조회·취소와 멱등성 | 01 | PLANNED | [PLAN](projects/02-payment-command-concurrency/PLAN.md) | [EXIT](projects/02-payment-command-concurrency/EXIT_CRITERIA.md) |
 | 03 | 09-28 ~ 10-11 | 신뢰 가능한 webhook | 01, 02 | PLANNED | [PLAN](projects/03-reliable-webhooks/PLAN.md) | [EXIT](projects/03-reliable-webhooks/EXIT_CRITERIA.md) |
 | 04 | 10-12 ~ 10-25 | 가상계좌와 비동기 대사 | 01~03 | PLANNED | [PLAN](projects/04-virtual-account-reconciliation/PLAN.md) | [EXIT](projects/04-virtual-account-reconciliation/EXIT_CRITERIA.md) |
-| 05 | 10-26 ~ 11-08 | MID·API 키·버전·보안·감사 | 01~04 | PLANNED | [PLAN](projects/05-merchant-api-security/PLAN.md) | [EXIT](projects/05-merchant-api-security/EXIT_CRITERIA.md) |
+| 05 | 10-26 ~ 11-08 | MID·API 키·보안·감사 | 01~04 | PLANNED | [PLAN](projects/05-merchant-api-security/PLAN.md) | [EXIT](projects/05-merchant-api-security/EXIT_CRITERIA.md) |
 | 06 | 11-09 ~ 11-22 | 관측성·장애 대응·1차 클라우드 | 01~05 | PLANNED | [PLAN](projects/06-operability-cloud/PLAN.md) | [EXIT](projects/06-operability-cloud/EXIT_CRITERIA.md) |
 | 07 | 11-23 ~ 12-06 | 하위 호환 API와 점진적 개편 | 02, 03, 05, 06 | PLANNED | [PLAN](projects/07-api-compat-migration/PLAN.md) | [EXIT](projects/07-api-compat-migration/EXIT_CRITERIA.md) |
 | 08 | 12-07 ~ 12-20 | 거래 단위 정산 엔진 | 01, 02, 04, 05 | PLANNED | [PLAN](projects/08-settlement-engine/PLAN.md) | [EXIT](projects/08-settlement-engine/EXIT_CRITERIA.md) |
 | 09 | 12-21 ~ 2027-01-03 | 결제 조회 모델과 서비스 경계 | 03, 06~08 | PLANNED | [PLAN](projects/09-payment-read-model-extraction/PLAN.md) | [EXIT](projects/09-payment-read-model-extraction/EXIT_CRITERIA.md) |
-| 10 | 01-04 ~ 01-17 | AI 결제 이상거래 탐지 | 02, 03, 05, 06 | PLANNED | [PLAN](projects/10-fraud-detection/PLAN.md) | [EXIT](projects/10-fraud-detection/EXIT_CRITERIA.md) |
-| 11 | 01-18 ~ 01-31 | 결제 운영 RAG와 모델 라우팅 | 05, 06 | PLANNED | [PLAN](projects/11-payment-ops-rag/PLAN.md) | [EXIT](projects/11-payment-ops-rag/EXIT_CRITERIA.md) |
-| 12 | 02-01 ~ 02-14 | 책임 있는 결제 운영 Agent | 02, 05, 10, 11 | PLANNED | [PLAN](projects/12-responsible-ops-agent/PLAN.md) | [EXIT](projects/12-responsible-ops-agent/EXIT_CRITERIA.md) |
+| 10 | 01-04 ~ 01-17 | AI 결제 이상거래 탐지 | 02~06 | PLANNED | [PLAN](projects/10-fraud-detection/PLAN.md) | [EXIT](projects/10-fraud-detection/EXIT_CRITERIA.md) |
+| 11 | 01-18 ~ 01-31 | 결제 운영 RAG와 근거 평가 | 05, 06 | PLANNED | [PLAN](projects/11-payment-ops-rag/PLAN.md) | [EXIT](projects/11-payment-ops-rag/EXIT_CRITERIA.md) |
+| 12 | 02-01 ~ 02-14 | 책임 있는 결제 운영 Agent | 02~05, 08, 10, 11 | PLANNED | [PLAN](projects/12-responsible-ops-agent/PLAN.md) | [EXIT](projects/12-responsible-ops-agent/EXIT_CRITERIA.md) |
 | Audit | 02-15 ~ 02-28 | 2차 클라우드·전체 계약 감사 | 01~12 | PLANNED | [FINAL AUDIT](reviews/FINAL_AUDIT_PLAN.md) | 선정 계약 VERIFIED, 전체 🔴 0건 |
 
 ## 의존성 흐름
@@ -80,14 +80,24 @@ flowchart LR
   P02 --> P07[07 호환 개편]
   P03 --> P07
   P05 --> P07
+  P06 --> P07
   P04 --> P08[08 정산]
   P05 --> P08
   P07 --> P09[09 조회·분리 실험]
   P08 --> P09
+  P04 --> P10[10 결제 FDS]
+  P02 --> P10
+  P03 --> P10
+  P05 --> P10
   P06 --> P10[10 결제 FDS]
   P06 --> P11[11 운영 RAG]
   P10 --> P12[12 운영 Agent]
   P11 --> P12
+  P02 --> P12
+  P03 --> P12
+  P04 --> P12
+  P05 --> P12
+  P08 --> P12
   P09 --> AUDIT[최종 감사]
   P12 --> AUDIT
 ```
@@ -97,16 +107,16 @@ flowchart LR
 | 프로젝트 | 공개 근거에서 가져오는 질문 | 프로젝트가 증명할 것 |
 | --- | --- | --- |
 | 01 | Payment와 거래·취소 사실을 어떻게 식별하는가? | 외부 결제 사실과 내부 journal을 분리하고 순액을 재계산 |
-| 02 | 승인·조회·취소와 멱등키가 어떤 계약을 가지는가? | 같은 요청은 같은 결과, 다른 본문은 충돌, 동시 취소 한도 보존 |
+| 02 | 승인·조회·취소와 멱등키가 어떤 계약을 가지는가? | 공개 tuple은 15일간 최초 응답을 재전송하고 처리 중에는 409; sandbox 내부 command만 같은 키·다른 본문 충돌, 동시 취소 한도 보존 |
 | 03 | webhook이 실패하면 언제 어떻게 다시 전달되는가? | 10초 ack, 문서 재전송 schedule, 중복 안전한 가맹점 수신 |
 | 04 | 가상계좌 발급과 입금 완료가 왜 다른 시점인가? | 비동기 상태·webhook·조회·대사의 최종 일치 |
-| 05 | MID·키·버전이 가맹점 경계를 어떻게 만드는가? | 가맹점 격리, 키 회전, 오류·버전 공통 규약과 감사 |
+| 05 | MID·키가 가맹점 경계를 어떻게 만드는가? | 가맹점 격리, 키 회전, 오류·권한 공통 규약과 감사 |
 | 06 | timeout·backlog·batch 실패를 어떻게 탐지하는가? | 합성 장애의 탐지→완화→복구와 계약 회귀 |
 | 07 | 가맹점 변경 없이 내부를 어떻게 교체하는가? | adapter, shadow/dual-run, 차이 보고서와 rollback rehearsal |
 | 08 | 당시 계약 조건으로 거래별 정산을 어떻게 재현하는가? | 수수료 정책 snapshot, 순정산액, 실패 건 재처리 |
 | 09 | 원장을 보호하면서 복잡한 조회를 어떻게 제공하는가? | event read model, 보정·무효화와 모듈/서비스 경계 비교 |
 | 10 | 결제 위험 신호를 자동 차단 없이 어떻게 평가하는가? | 합성 데이터, 규칙 기준선, 모델과 분석가 검토 |
-| 11 | 운영 질문에 공식 근거를 어떻게 반환하는가? | retrieval·인용·거절·모델 라우팅의 분리 평가 |
+| 11 | 운영 질문에 공식 근거를 어떻게 반환하는가? | retrieval baseline·challenger, 인용·거절의 분리 평가 |
 | 12 | AI 제안이 무단 결제 변경으로 이어지지 않는가? | READ·PROPOSE·APPROVE·EXECUTE 분리와 감사 chain |
 
 ## 2주 운영 리듬
@@ -133,7 +143,7 @@ flowchart LR
 ### 1차: 프로젝트 06
 
 - 결제 승인·취소, webhook, 가상계좌·대사, MID 보안을 단일 배포 단위로 ECS/RDS에 임시 배포
-- 샘플 상점, 운영 화면, 최대 3개 dashboard와 3개 합성 장애 시나리오
+- 샘플 상점, 한 dashboard와 2개 필수 합성 장애 시나리오; 추가 dashboard·세 번째 장애는 확장
 - 로컬과 AWS topology·수치를 분리하고 비용·제거 결과를 보관
 
 ### 2차: 최종 감사
@@ -146,7 +156,7 @@ flowchart LR
 
 - 프로젝트 태그: `p01-ledger-core`, `p02-payment-command-concurrency`, `p03-reliable-webhooks`, `p04-virtual-account-reconciliation`, `p05-merchant-api-security`, `p06-operability-cloud`, `p07-api-compat-migration`, `p08-settlement-engine`, `p09-payment-read-model-extraction`, `p10-fraud-detection`, `p11-payment-ops-rag`, `p12-responsible-ops-agent`
 - 쇼케이스 태그: `showcase-01-payment-sandbox`, `showcase-02-ai-payment-ops`
-- `RELEASED`와 clean evidence manifest가 확인된 뒤에만 태그를 생성합니다.
+- Portfolio Review PASS, 🔴 High 0건과 clean evidence manifest가 확인된 `RELEASE_CANDIDATE` commit에만 태그를 생성합니다. tag tree의 manifest, 도달 가능한 `sourceSha`, 허용된 중간 diff와 `intendedTags`가 일치함을 확인한 뒤 `RELEASED`로 승격합니다.
 
 ## 채용용 최종 구성
 

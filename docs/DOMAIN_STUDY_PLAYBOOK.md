@@ -90,7 +90,7 @@
 | 같은 주문을 두 번 승인하면 안 된다 | 같은 멱등키·같은 본문, 같은 키·다른 본문, 동시 요청 |
 | 부분 취소 합계는 승인 금액을 넘지 않는다 | 경계값, 동시 취소, 재시도, overflow |
 | 외부 성공과 내부 실패가 동시에 남으면 안 된다 | transaction rollback, timeout 후 status query, 대사 차이 |
-| webhook은 중복될 수 있다 | 같은 event ID 재전송과 고유 처리 수 확인 |
+| webhook은 중복될 수 있다 | 각 요청의 transmission 헤더를 보존하고 같은 canonical Payment snapshot과 서로 다른 이벤트의 동일 business effect 처리 수 확인 |
 | 정산 합계만 맞아도 개별 거래가 틀릴 수 있다 | 합계 대사와 식별자별 대사를 별도 검증 |
 
 ## 첫 번째 공식 문서 묶음

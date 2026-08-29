@@ -226,11 +226,17 @@ manifest에는 다음 필드를 포함합니다.
 
 승격 후 생긴 추적 파일은 별도 evidence commit으로 검토합니다. `MANIFEST.md`에는 검증 대상인 source SHA를 기록하고, evidence commit 자체는 Git 이력과 tag·PR에서 식별합니다. commit이 자기 SHA를 본문에 기록하는 자기참조 계약은 두지 않습니다.
 
+### 프로젝트 evidence validator 확장 `[가정]`
+
+프로젝트 01이 `EVIDENCE_READY`로 이동하기 전에 공통 harness가 `./gradlew evidenceCheck -PtargetProject=<id>`를 제공합니다. 이 작업은 `docs/EVIDENCE_POLICY.md`가 정의한 YAML front matter·필수 H2, raw 경로·checksum, `sourceSha`, `intendedTags`, 실제 파일 존재와 `sourceSha..candidate` 변경 allowlist를 검사합니다. `final-audit`이면 `reviews/evidence/MANIFEST.md`와 12개 하위 manifest checksum을 검사합니다. allowlist 밖의 코드·설정·migration·contract·OpenAPI 변경은 기존 evidence를 무효화합니다. schema와 validator의 소유자는 루트 harness이며 각 프로젝트가 서로 다른 manifest 형식을 만들지 않습니다. validator가 구현·통과하지 않으면 해당 프로젝트는 `HOLD`입니다.
+
 ## 6. 단계 B — 도메인 지식과 검색·RAG 준비
 
 ### 지식 catalog
 
 기존 문서 내용을 복제하지 않고 `docs/domain/catalog.yaml`에서 검색 대상과 metadata를 관리합니다.
+
+현재 사실과 미래 계획이 섞인 `README.md`, `docs/HARNESS_ENGINEERING_PLAN.md` 및 PG 전환 이전 리뷰는 claim-level 상태 migration 전까지 catalog에서 제외합니다. 프로젝트 11이 section·claim override와 deprecated/excluded 처리를 구현·검증한 뒤에만 다시 등록합니다.
 
 | 필드 | 계약 |
 | --- | --- |

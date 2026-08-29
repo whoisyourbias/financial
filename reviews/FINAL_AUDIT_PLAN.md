@@ -13,6 +13,7 @@
 - 누락·읽기 실패·미확인 이미지를 별도로 기록합니다.
 - 계획 스택과 실제 사용 스택을 비교해 미사용 기술을 제거합니다.
 - HOLD 프로젝트가 있으면 대표 사례 포함을 중단합니다.
+- 공식 source registry를 refresh하고 checkedAt·heading/field anchor·content hash의 contract diff를 기록합니다.
 
 ## Day 2 — 금융 불변식 회귀
 
@@ -52,16 +53,21 @@
 - 실제 on-call이 아니라 계획된 chaos experiment라고 명시합니다.
 - evidence를 수집한 뒤 AWS 리소스를 제거하고 Terraform plan과 비용을 확인합니다.
 
-## Day 8 — Portfolio Review 전수 평가
+## Day 8 — 채용 패키지 후보와 1차 전수 평가
 
 `hiring-sim-portfolio-review`를 전체 저장소에 적용합니다.
 
 - 네 대표 사례 각각의 기술적 의사결정, 문제 해결, 성과·임팩트를 평가합니다.
 - 모든 대표 숫자를 raw evidence와 대조합니다.
-- README, 결과표, dashboard, 다이어그램을 상호 대조합니다.
+- 루트 README, 네 사례 요약, 진화 timeline, 면접 질문·evidence 링크를 먼저 candidate 형태로 갱신하고 결과표·dashboard·다이어그램과 상호 대조합니다.
+- 지원할 실제 공고 3~5개와 대표 사례를 연결합니다.
 - 한 영역이라도 부적합인 사례는 대표 사례에서 제외하거나 보완합니다.
+- Portfolio Review와 Red Team을 모두 1차 실행하고 지적을 계약·계획·증거에 보정합니다.
+- `reviews/evidence/MANIFEST.md`를 `projectId: final-audit`, `intendedTags: [showcase-02-ai-payment-ops]`로 생성하고 12개 프로젝트 manifest checksum과 통합 산출물을 연결합니다.
+- 보정이 루트 README·reviews·결과·evidence allowlist 밖의 계약·계획·코드·설정·migration·OpenAPI를 바꾸면 기존 evidence를 무효화합니다. 새 변경을 `sourceSha`로 삼아 Day 2~7의 영향받은 회귀·측정·cloud 제거와 manifest 생성을 다시 통과한 뒤 Day 8을 처음부터 반복합니다.
+- allowlist 안의 패키징만 남고 aggregate `evidenceCheck`가 통과한 공개 payload를 commit `C0`으로 동결합니다.
 
-## Day 9 — Red Team 전수 공격
+## Day 9 — 동결 candidate 재심사
 
 `hiring-sim-portfolio-redteam`을 전체 저장소와 모든 이미지에 적용합니다.
 
@@ -70,15 +76,16 @@
 - L3: 네 대표 주장에 대한 최악의 후속 질문 생성
 - 8종 감점 유형과 기술 결정 5요소를 전수 검사
 - 🔴가 하나라도 남으면 공개 패키지를 완료하지 않습니다.
+- 두 스킬을 동결 payload `C0`에 실행하고 각 결과 front matter의 `reviewedSha`를 `C0`로 기록합니다.
+- `reviews/FINAL_PORTFOLIO_REVIEW.md`, `reviews/FINAL_REDTEAM_REVIEW.md` 두 파일만 추가한 직계 후속 attestation commit `C1`을 만듭니다. `C0..C1`에 다른 tracked 변경이 있으면 실패입니다.
+- Portfolio Review PASS와 🔴 High 0이 아니면 tag하지 않습니다. 보정 뒤 새 payload `C0`를 만들고 두 심사를 모두 다시 실행하며, allowlist 밖 변경이면 Day 2~8로 돌아갑니다.
 
-## Day 10 — 채용용 패키징
+## Day 10 — 무변경 release 검증과 tag
 
-- 루트 README를 네 대표 사례 중심으로 갱신합니다.
-- 각 사례를 `문제 → 메커니즘 → 실제 대안 → 선택 → 비용 → 검증 → 한계`로 압축합니다.
-- 12개 회차는 한 장의 진화 타임라인으로 이동합니다.
-- 지원할 실제 공고 3~5개와 대표 사례를 다시 연결합니다.
-- 면접 후속 질문과 evidence 링크를 정리합니다.
-- 최종 tag `showcase-02-ai-finance`를 생성합니다.
+- attestation commit `C1` 이후 tracked file 변경이 0건인지 확인합니다.
+- aggregate manifest의 `sourceSha..C0` allowlist, 12개 하위 checksum, artifact checksum, cloud 제거와 `intendedTags`를 검증하고 두 review report가 같은 `reviewedSha=C0`를 가리키는지 확인합니다.
+- 문서 수정이 필요하면 tag하지 않고 새 payload를 동결해 Day 9 재심사로 돌아갑니다. allowlist 밖 변경이면 Day 2~8을 다시 수행합니다.
+- 최종 tag `showcase-02-ai-payment-ops`를 attestation commit `C1`에 생성하고 tag 검증 후 `RELEASED`로 승격합니다.
 
 ## 최종 산출물
 
@@ -91,6 +98,7 @@
 - Red Team 결과
 - 면접 질문·답변 근거집
 - AWS 제거·비용 확인 기록
+- `reviews/evidence/MANIFEST.md` 통합 manifest
 
 ## 완료 조건
 
