@@ -1,31 +1,43 @@
 # 아키텍처 진화 계획
 
-## 핵심 원칙
+## 표기와 핵심 원칙
 
-아키텍처는 미래 규모를 상상해 미리 분산하지 않습니다. 먼저 하나의 프로세스 안에서 금융 불변식과 모듈 경계를 검증하고, 경계 분리가 가져오는 이점과 비용을 프로젝트 09에서 같은 시나리오로 비교합니다.
+- 실선 노드: 현재 저장소에서 코드 또는 실행 설정으로 확인되는 구성요소
+- 점선 노드: 계획된 구성요소
+- 외부 계약은 토스페이먼츠 V2 선정 표면을 따르고 내부 구조는 자체 설계합니다.
+- 하나의 프로세스에서 경계를 검증한 뒤 프로젝트 09에서만 분리 비용을 비교합니다.
 
-## 단계 1 — 정합성 중심 모듈러 모놀리스
+## 현재 — 하네스와 원장 골격
+
+```mermaid
+flowchart LR
+  BOOT[Bootstrap] --> LEDGER[Ledger Skeleton]
+  LEDGER --> DB[(PostgreSQL)]
+  BOOT --> SHARED[Shared Kernel]
+```
+
+현재 구현은 `Money`, account migration·JPA smoke test와 공통 하네스입니다. 아래 단계는 모두 `[가정]`이며 구현 뒤 실선으로 승격합니다.
+
+## 단계 1 — 계약 중심 모듈러 모놀리스
 
 대상: 프로젝트 01~05
 
 ```mermaid
 flowchart LR
-  API[HTTP API] --> APP[Application Layer]
-  APP --> LEDGER[Ledger Module]
-  APP --> TRANSFER[Transfer Module]
-  APP --> RECON[Reconciliation Module]
-  APP --> IDENTITY[Identity & Audit Module]
-  LEDGER --> DB[(PostgreSQL)]
-  TRANSFER --> LEDGER
-  RECON --> LEDGER
-  IDENTITY --> DB
+  MERCHANT -.-> API[Compatible Payment API]
+  API -.-> PAYMENT[Payment Command]
+  PAYMENT -.-> LEDGER[Ledger]
+  PAYMENT -.-> WEBHOOK[Webhook Delivery]
+  PAYMENT -.-> VA[Virtual Account]
+  VA -.-> RECON[Reconciliation]
+  API -.-> IDENTITY[MID & Identity/Audit]
+  LEDGER -.-> DB[(PostgreSQL)]
 ```
 
-- 원장이 금전 기록의 source of truth입니다.
-- 잔액은 원장 posting에서 계산 가능한 projection이며, 캐시·집계 값과 원장이 다르면 원장을 우선합니다.
-- 이체는 원장 posting을 직접 조작하지 않고 ledger application port를 호출합니다.
-- audit은 도메인 이벤트와 보안 주체 정보를 기록하지만 금전 원장 역할을 대신하지 않습니다.
-- module dependency를 ArchUnit 또는 동등한 테스트로 강제할 계획입니다.
+- 공개 API DTO와 내부 aggregate를 분리합니다.
+- Payment와 Cancel의 외부 상태를 내부 operation·journal과 명시적으로 매핑합니다.
+- MID가 API key, Payment, webhook endpoint와 조회 범위의 tenant 경계입니다.
+- 샘플 상점은 실제 가맹점처럼 금액 검증과 webhook 중복 억제를 수행합니다.
 
 ## 단계 2 — 비동기 전달과 운영 기준선
 
@@ -33,124 +45,110 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  TX[Business Transaction] --> DB[(PostgreSQL)]
-  TX --> OUTBOX[(Outbox)]
-  OUTBOX --> PUB[Publisher]
-  PUB --> BROKER[Kafka-compatible Broker]
-  BROKER --> INBOX[Consumer Inbox]
-  INBOX --> READ[Read Model / Reconciliation]
+  TX[Payment Transaction] -.-> DB[(PostgreSQL)]
+  TX -.-> OUTBOX[(Outbox)]
+  OUTBOX -.-> DELIVERY[Webhook Delivery]
+  DELIVERY -.-> SHOP[Sample Merchant]
+  SHOP -.-> INBOX[(Webhook Inbox)]
   TX -. trace .-> OTEL[OpenTelemetry]
-  PUB -. trace .-> OTEL
-  INBOX -. trace .-> OTEL
+  DELIVERY -. trace .-> OTEL
+  SHOP -. trace .-> OTEL
 ```
 
-- outbox는 DB 변경과 이벤트 의도를 함께 저장할 뿐, 전달을 exactly-once로 만들지 않습니다.
-- publisher 재실행과 consumer 중복은 의도적으로 주입합니다.
-- 지표·로그·trace가 같은 correlation ID로 연결되는지 검증합니다.
-- 프로젝트 06의 AWS 구조는 단일 애플리케이션 배포이며 MSA로 표현하지 않습니다.
+- 공개 webhook은 10초 ack와 최대 7회 재전송 schedule을 fake clock으로 검증합니다.
+- outbox는 발행 의도를 보존하지만 exactly-once를 주장하지 않습니다.
+- 결제 응답 유실, webhook 실패, 가상계좌 입금 지연을 서로 다른 상태로 관측합니다.
+- 프로젝트 06은 단일 애플리케이션 배포이며 MSA가 아닙니다.
 
-## 단계 3 — 결제 도메인 확장
+## 단계 3 — 호환 개편과 정산
 
 대상: 프로젝트 07~08
 
 ```mermaid
 flowchart LR
-  CLIENT[Client] --> PAYMENT[Payment Module]
-  PAYMENT --> LEDGER[Ledger Port]
-  PAYMENT --> PARTNER[Partner Adapter]
-  PARTNER --> STUB[Deterministic Partner Stub]
-  STUB --> WEBHOOK[Signed Webhook]
-  WEBHOOK --> PAYMENT
-  PAYMENT --> CLEARING[Clearing & Settlement Batch]
+  MERCHANT[Unchanged Merchant] -.-> COMPAT[Compatibility Adapter]
+  COMPAT -.-> LEGACY[Baseline Engine]
+  COMPAT -. shadow .-> NEW[Rewritten Engine]
+  LEGACY -.-> DIFF[Dual-run Diff]
+  NEW -.-> DIFF
+  NEW -.-> SETTLEMENT[Per-transaction Settlement]
+  SETTLEMENT -.-> SNAPSHOT[Contract Snapshot]
 ```
 
-- 결제 상태 전이는 코드와 문서의 단일 전이표에서 관리합니다.
-- 외부 파트너 stub은 지연, 중복, 오류, webhook 순서 역전을 재현합니다.
-- 결제 승인과 원장 반영의 경계를 ADR로 설명합니다.
-- 취소·부분 환불은 기존 posting을 삭제하지 않고 반대 posting으로 기록합니다.
+- 같은 공개 fixture를 baseline과 rewritten engine에 입력해 응답·상태·journal 차이를 비교합니다.
+- shadow 결과는 외부 응답이나 금전을 변경하지 않습니다.
+- 정산은 거래 단위 결과와 당시 수수료 정책 snapshot을 보존합니다.
+- rollback은 애플리케이션뿐 아니라 미처리 event와 데이터 전환 상태까지 포함합니다.
 
-## 단계 4 — 결제 서비스 분리 실험
+## 단계 4 — 조회 모델과 서비스 경계 실험
 
 대상: 프로젝트 09
 
 ```mermaid
 flowchart LR
-  CORE[Core Banking App] -->|versioned API/events| PAY[Payment Service]
-  PAY --> PAYDB[(Payment DB)]
-  PAY --> BROKER[Broker]
-  BROKER --> CORE
-  CORE --> LEDGERDB[(Ledger DB)]
+  API[Payment Command API] -.-> PAY[Payment Module or Service]
+  PAY -.-> PAYDB[(Payment DB)]
+  PAY -. event .-> READ[Merchant Read Model]
+  READ -.-> READDB[(Read DB)]
+  PAY -. port/event .-> LEDGER[Ledger]
+  LEDGER -.-> LEDGERDB[(Ledger DB)]
 ```
 
-### 분리 후보 근거
+- command source와 read model을 먼저 분리하고 이벤트 중복·보정·재구축을 검증합니다.
+- payment process 분리는 같은 use case·fault schedule로 모듈 기준선과 비교합니다.
+- 공유 table 접근은 금지하며 pending·difference를 숨기지 않습니다.
+- 비용이 이점보다 크면 모듈 상태로 원복하는 결론을 허용합니다.
 
-- 외부 파트너 장애와 배포 주기가 계정·원장 기능과 다릅니다.
-- 결제 상태 머신은 독립된 데이터 소유권을 가질 수 있습니다.
-- 파트너 트래픽 제어와 webhook 처리를 별도로 관측할 가치가 있습니다.
-
-이는 아직 `[가정]`입니다. 프로젝트 09에서 다음을 같은 조건으로 비교합니다.
-
-- 변경 영향 범위와 모듈 결합도
-- end-to-end 지연과 실패 지점
-- 로컬 실행·배포·관측 복잡도
-- 데이터 정합성 복구 절차
-- API·이벤트 스키마 변경 비용
-
-분리 결과가 불리하면 다시 모듈로 합치는 결론을 허용합니다. 어느 결론이든 측정 조건과 감수한 비용을 남깁니다.
-
-## 단계 5 — AI 보조 경계
+## 단계 5 — 결제 운영 AI 보조 경계
 
 대상: 프로젝트 10~12
 
 ```mermaid
 flowchart LR
-  EVENTS[Transaction Events] --> FDS[FDS Scoring]
-  FDS --> CASES[Analyst Case Queue]
-  DOCS[Versioned Policy Docs] --> RAG[RAG Service]
-  USER[Authenticated User] --> AGENT[Agent Orchestrator]
-  AGENT --> RAG
-  AGENT --> READ[Read-only Tools]
-  AGENT --> PROPOSAL[Action Proposal]
-  HUMAN[Human Approver] --> APPROVAL[Deterministic Approval API]
-  PROPOSAL --> APPROVAL
-  APPROVAL --> CORE[Core Banking / Payment]
+  EVENTS[Payment Events] -.-> FDS[FDS Scoring]
+  FDS -.-> CASES[Analyst Cases]
+  DOCS[Versioned Payment Docs] -.-> RAG[RAG]
+  USER[Operator] -.-> AGENT[Agent]
+  AGENT -.-> RAG
+  AGENT -.-> READ[Read-only Tools]
+  AGENT -.-> PROPOSAL[Refund Proposal]
+  HUMAN[Human Approver] -.-> APPROVAL[Approval API]
+  PROPOSAL -.-> APPROVAL
+  APPROVAL -.-> PAYMENT[Deterministic Payment Service]
 ```
 
-- FDS 결과는 차단 결정이 아니라 분석가 검토 대상의 우선순위입니다.
-- RAG는 문서 인용을 반환하며 모르는 질문을 거절할 수 있어야 합니다.
-- Agent는 읽기와 변경 제안까지만 수행합니다.
-- 승인 API는 Agent prompt와 분리된 인증·인가 경계를 가집니다.
-- AI 서비스 장애는 원장·결제 기록을 롤백시키지 않습니다.
+- FDS는 자동 차단하지 않고 검토 우선순위만 제공합니다.
+- RAG는 버전 고정 공식 문서와 합성 운영 정책의 인용·거절을 분리 평가합니다.
+- Agent는 READ·PROPOSE만 가지며 APPROVE·EXECUTE credential을 갖지 않습니다.
+- AI 장애는 결제·원장 기록을 롤백하지 않습니다.
 
 ## 데이터 소유권
 
-| 데이터                        | 소유자         | 다른 모듈 접근 방식               |
-| ----------------------------- | -------------- | --------------------------------- |
-| journal·posting               | Ledger         | application port, versioned event |
-| transfer request·idempotency  | Transfer       | transfer API/event                |
-| reconciliation job·difference | Reconciliation | reconciliation query              |
-| identity·role·audit           | Identity/Audit | security context, audit event     |
-| payment state                 | Payment        | payment API/event                 |
-| FDS feature·score·case        | FDS            | asynchronous event, analyst API   |
-| document chunk·evaluation     | RAG            | retrieval API                     |
-| action proposal·approval      | Agent/Approval | proposal and approval APIs        |
-
-별도 서비스가 되기 전에도 테이블 직접 접근을 금지해 논리적 소유권을 유지합니다.
+| 데이터 | 소유자 | 다른 모듈의 접근 |
+| --- | --- | --- |
+| journal·posting | Ledger | application port, versioned event |
+| payment·operation·idempotency | Payment | compatible API, payment event |
+| webhook subscription·delivery | Webhook | application port, delivery query |
+| virtual account·deposit | Virtual Account | payment port, deposit event |
+| reconciliation·difference | Reconciliation | query API |
+| merchant·MID·key·audit | Identity/Audit | security context, audit event |
+| settlement item·policy snapshot | Settlement | settlement query/event |
+| read projection | Read Model | event rebuild, query API |
+| FDS case, RAG document, proposal | 각 AI 경계 | 비동기 event 또는 명시적 API |
 
 ## 실패와 복구 경계
 
-- 원장 commit 실패: 전체 금전 작업 실패, 재시도는 같은 idempotency key 사용
-- broker 장애: outbox에 의도 유지, 거래 commit은 보존, 전달 지연 관측
-- consumer 장애: inbox와 offset을 기준으로 중복 안전 재처리
-- partner 장애: payment state를 불명확 상태로 두고 조회·대사로 확정
-- FDS 장애: 거래는 기록하되 미평가 상태를 적재하고 복구 후 재평가
-- RAG/model 장애: 근거 없는 응답을 만들지 않고 명시적 unavailable 반환
-- Agent 장애: 제안은 실행되지 않으며 승인 API는 만료·버전을 재검증
+- 승인 timeout·응답 유실: 임의 확정하지 않고 같은 식별자로 조회·재시도
+- 원장 commit 실패: 결제 금전 결과도 함께 실패하거나 명시적 pending으로 남김
+- webhook 실패: delivery 상태와 schedule을 보존하고 가맹점은 중복 안전 처리
+- 가상계좌 callback 지연: 발급 상태와 입금 완료를 분리하고 조회·대사로 확인
+- 정산 batch 실패: 거래별 상태에서 실패 건만 재처리
+- read model 장애: command 원본은 보존하고 projection을 재구축
+- AI 장애: 미평가·unavailable·미실행 proposal로 남기고 금전 변경을 만들지 않음
 
-## 아키텍처 문서 정합성 규칙
+## 정합성 규칙
 
-- 다이어그램의 모든 구성요소는 코드·배포·설정 중 하나에서 확인 가능해야 합니다.
-- 계획 요소는 점선 또는 `[가정]`으로 표시합니다.
-- 사용하지 않은 기술 로고를 넣지 않습니다.
-- 서비스 분리 전후 다이어그램을 함께 보관하며 현재 구조를 명시합니다.
-- 최종 감사에서 다이어그램 노드와 실제 실행 단위를 전수 대조합니다.
+- 계획 노드는 구현 전까지 점선으로 유지합니다.
+- 다이어그램 노드는 코드·배포·설정 중 하나에서 확인된 뒤에만 실선으로 바꿉니다.
+- 계약 매트릭스, 실제 OpenAPI, DTO fixture와 contract test를 같은 변경에서 갱신합니다.
+- 최종 감사에서 현재 diagram의 process·database·queue와 실행 구성을 전수 대조합니다.

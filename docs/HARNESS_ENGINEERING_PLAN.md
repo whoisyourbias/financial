@@ -238,7 +238,7 @@ manifest에는 다음 필드를 포함합니다.
 | `title` | 사람이 읽는 문서 제목 |
 | `path` | 저장소 상대 경로 |
 | `kind` | `policy`, `architecture`, `domain`, `plan`, `exit-criteria`, `review`, `external` |
-| `domains` | ledger, transfer, payment, security, operations, FDS, RAG, agent 등의 목록 |
+| `domains` | ledger, payment, settlement, security, operations, FDS, RAG, agent 등의 목록 |
 | `status` | `planned`, `verified`, `unknown`, `contradicted` 중 하나 |
 | `version` | 문서 의미 버전 |
 | `reviewedAt` | 마지막 검토일 |
