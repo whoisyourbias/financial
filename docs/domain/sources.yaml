@@ -47,3 +47,323 @@ sources:
     domains: [repository]
     scope: Minimal CI permissions and action pinning
     storesOriginal: false
+  - id: toss-payments-payment-flow
+    title: 결제 흐름 이해하기
+    url: https://docs.tosspayments.com/guides/v2/get-started/payment-flow
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment]
+    scope: 결제 요청·인증·승인, orderId·amount 검증과 paymentKey 역할
+    storesOriginal: false
+  - id: toss-payments-core-api
+    title: 코어 API
+    url: https://docs.tosspayments.com/reference
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, settlement]
+    scope: Payment 객체, 결제 상태, 승인·조회·취소·정산 조회 계약
+    storesOriginal: false
+  - id: toss-payments-authorization
+    title: 인증 및 기타 헤더 설정
+    url: https://docs.tosspayments.com/reference/using-api/authorization
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, security]
+    scope: API 인증과 Idempotency-Key 동작
+    storesOriginal: false
+  - id: toss-payments-webhook-events
+    title: 웹훅 이벤트
+    url: https://docs.tosspayments.com/reference/using-api/webhook-events
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, events]
+    scope: 결제·취소·지급대행 상태 변경 이벤트
+    storesOriginal: false
+  - id: toss-payments-settlement
+    title: 정산
+    url: https://docs.tosspayments.com/resources/glossary/settlement
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, settlement]
+    scope: PG 정산의 액터, 정산 금액과 정산 주기 개념
+    storesOriginal: false
+  - id: toss-payments-llms-index
+    title: Toss Payments Developer Documentation llms.txt
+    url: https://docs.tosspayments.com/llms.txt
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, repository]
+    scope: V2 가이드·SDK·API·용어집 전체 탐색 인덱스
+    storesOriginal: false
+  - id: toss-payments-llm-quick-reference
+    title: LLM Quick Reference
+    url: https://docs.tosspayments.com/guides/v2/get-started/llms-quick-reference
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment]
+    scope: 결제 흐름·결정 규칙·보안 주의점의 압축 안내
+    storesOriginal: false
+  - id: toss-payments-online-payment
+    title: PG와 온라인 결제
+    url: https://docs.tosspayments.com/guides/v2/get-started/online-payment
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment]
+    scope: PG 액터와 요청·인증·승인 단계
+    storesOriginal: false
+  - id: toss-payments-payment-methods
+    title: 결제수단 정책
+    url: https://docs.tosspayments.com/guides/v2/get-started/payment-methods
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment]
+    scope: 카드·간편결제·가상계좌 제약과 취소 정책
+    storesOriginal: false
+  - id: toss-payments-environment
+    title: 환경 설정하기
+    url: https://docs.tosspayments.com/guides/v2/get-started/environment
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, operations]
+    scope: 테스트·라이브 환경 차이와 실패 재현
+    storesOriginal: false
+  - id: toss-payments-cancel-guide
+    title: 결제 취소하기
+    url: https://docs.tosspayments.com/guides/v2/cancel-payment
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment]
+    scope: 전액·부분 취소, transactionKey와 가상계좌 환불 규칙
+    storesOriginal: false
+  - id: toss-payments-virtual-account
+    title: 가상계좌 결제창 연동하기
+    url: https://docs.tosspayments.com/guides/v2/payment-window/integration-virtual-account
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, reconciliation]
+    scope: 가상계좌 발급·입금·웹훅 기반 비동기 결제 흐름
+    storesOriginal: false
+  - id: toss-payments-webhook-guide
+    title: 웹훅 연결하기
+    url: https://docs.tosspayments.com/guides/v2/webhook
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, events, operations]
+    scope: MID별 등록, 10초 응답, 최대 7회 재전송 정책
+    storesOriginal: false
+  - id: toss-payments-status-page
+    title: 장애 인지 가이드
+    url: https://docs.tosspayments.com/guides/v2/status-page
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, operations]
+    scope: 결제 장애 인지와 상태 알림 대응
+    storesOriginal: false
+  - id: toss-payments-deploy-checklist
+    title: 배포 체크리스트
+    url: https://docs.tosspayments.com/guides/v2/deploy-checklist
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, operations]
+    scope: 결제·취소·가상계좌·오류·플랫폼 검증 항목
+    storesOriginal: false
+  - id: toss-payments-error-codes
+    title: API 에러 코드
+    url: https://docs.tosspayments.com/reference/error-codes
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment]
+    scope: HTTP 상태와 승인·조회·취소 오류 객체 계약
+    storesOriginal: false
+  - id: toss-payments-api-keys
+    title: API 키
+    url: https://docs.tosspayments.com/reference/using-api/api-keys
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, security]
+    scope: MID별 키, 테스트·라이브 키와 회전 동작
+    storesOriginal: false
+  - id: toss-payments-request-response
+    title: 요청·응답 본문
+    url: https://docs.tosspayments.com/reference/using-api/req-res
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment]
+    scope: JSON 요청·리소스 응답·오류 응답·HTTP 규칙
+    storesOriginal: false
+  - id: toss-payments-security
+    title: API 보안
+    url: https://docs.tosspayments.com/reference/using-api/security
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, security]
+    scope: HTTPS·TLS와 네트워크 보안 요구사항
+    storesOriginal: false
+  - id: toss-payments-versioning
+    title: API 버전 정책
+    url: https://docs.tosspayments.com/reference/versioning
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, architecture]
+    scope: 하위 호환 변경과 새 버전이 필요한 변경의 경계
+    storesOriginal: false
+  - id: toss-payments-data-types
+    title: 데이터 타입
+    url: https://docs.tosspayments.com/codes/data-types
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment]
+    scope: API 필드 타입과 형식 제약
+    storesOriginal: false
+  - id: toss-payments-enum-codes
+    title: ENUM 코드
+    url: https://docs.tosspayments.com/codes/enum-codes
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, settlement]
+    scope: 결제·취소·정산 enum 의미
+    storesOriginal: false
+  - id: toss-payments-transaction-flow
+    title: 결제와 거래, 차이점이 뭔가요
+    url: https://docs.tosspayments.com/blog/transaction-flow
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment]
+    scope: Payment와 개별 거래 객체의 역할 구분
+    storesOriginal: false
+  - id: toss-payments-idempotency
+    title: 멱등성이 뭔가요
+    url: https://docs.tosspayments.com/blog/what-is-idempotency
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, events]
+    scope: 안전한 API 재시도와 멱등성 개념
+    storesOriginal: false
+  - id: toss-payments-virtual-account-webhook
+    title: 가상계좌 연동할 때 웹훅이 꼭 필요한 이유
+    url: https://docs.tosspayments.com/blog/virtual-account-webhook
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, events]
+    scope: 발급과 입금 완료가 분리된 비동기 흐름
+    storesOriginal: false
+  - id: toss-payments-secret-key-practice
+    title: 시크릿 키 베스트 프랙티스
+    url: https://docs.tosspayments.com/blog/secret-key-best-practice
+    publisher: Toss Payments
+    checkedAt: 2026-08-28
+    domains: [payment, security]
+    scope: 시크릿 키 노출 방지와 서버 보관 원칙
+    storesOriginal: false
+  - id: toss-legacy-series
+    title: 토스페이먼츠 레거시 개편 이야기
+    url: https://toss.tech/series/payments-legacy
+    publisher: Toss Tech
+    checkedAt: 2026-08-28
+    domains: [payment, settlement, architecture, operations, security]
+    scope: 현재 13개 공식 개편 아티클의 탐색 인덱스
+    storesOriginal: false
+  - id: toss-legacy-intro
+    title: 멈춰있던 PG의 시간, 토스페이먼츠가 다시 흐르게 합니다
+    url: https://toss.tech/article/payments-legacy-intro
+    publisher: Toss Tech
+    checkedAt: 2026-08-28
+    domains: [payment, architecture]
+    scope: 레거시 개편 시리즈의 문제 배경과 전체 경계
+    storesOriginal: false
+  - id: toss-legacy-overview
+    title: 20년 레거시를 넘어 미래를 준비하는 시스템 만들기
+    url: https://toss.tech/article/payments-legacy-1
+    publisher: Toss Tech
+    checkedAt: 2026-08-28
+    domains: [payment, architecture, operations]
+    scope: PG 현대화의 단계와 공개된 문제 범주
+    storesOriginal: false
+  - id: toss-legacy-payment-window
+    title: 가맹점은 변함없이, 결제창 시스템 전면 재작성하기
+    url: https://toss.tech/article/payments-legacy-2
+    publisher: Toss Tech
+    checkedAt: 2026-08-28
+    domains: [payment, architecture]
+    scope: 가맹점 계약을 유지하는 점진적 재작성 사례
+    storesOriginal: false
+  - id: toss-legacy-sdk
+    title: 100년 가는 프론트엔드 코드, SDK
+    url: https://toss.tech/article/payments-legacy-3
+    publisher: Toss Tech
+    checkedAt: 2026-08-28
+    domains: [payment, operations, security]
+    scope: 다양한 가맹점 환경, SDK 호환성과 관측 사례
+    storesOriginal: false
+  - id: toss-legacy-open-api
+    title: 토스페이먼츠의 Open API 생태계
+    url: https://toss.tech/article/42679
+    publisher: Toss Tech
+    checkedAt: 2026-08-28
+    domains: [payment, architecture, security]
+    scope: OAS 문서 동기화와 인증·오류·버전 공통 규약
+    storesOriginal: false
+  - id: toss-legacy-ledger
+    title: 레거시 결제 원장을 확장 가능한 시스템으로
+    url: https://toss.tech/article/payments-legacy-5
+    publisher: Toss Tech
+    checkedAt: 2026-08-28
+    domains: [ledger, payment, events, operations]
+    scope: timeout·응답 불일치·망취소·이벤트 누락과 복구 사례
+    storesOriginal: false
+  - id: toss-legacy-settlement
+    title: 레거시 정산 개편기
+    url: https://toss.tech/article/payments-legacy-6
+    publisher: Toss Tech
+    checkedAt: 2026-08-28
+    domains: [settlement, batch, architecture]
+    scope: 거래 단위 계산·계약 스냅샷·상태 재처리·배치 개선 사례
+    storesOriginal: false
+  - id: toss-legacy-data-serving
+    title: 고객은 절대 기다려주지 않는다
+    url: https://toss.tech/article/payments-legacy-7
+    publisher: Toss Tech
+    checkedAt: 2026-08-28
+    domains: [payment, architecture, operations]
+    scope: 원장과 조회 분리, 이벤트 read model과 보정 비용 사례
+    storesOriginal: false
+  - id: toss-legacy-configuration
+    title: 수천 개의 API/BATCH 서버를 하나의 설정 체계로 관리하기
+    url: https://toss.tech/article/payments-legacy-8
+    publisher: Toss Tech
+    checkedAt: 2026-08-28
+    domains: [operations, batch]
+    scope: 중복 없는 테스트 가능한 API·batch 설정 사례
+    storesOriginal: false
+  - id: toss-legacy-infrastructure
+    title: 레거시 인프라 작살내고 하이브리드 클라우드 만든 썰
+    url: https://toss.tech/article/payments-legacy-9
+    publisher: Toss Tech
+    checkedAt: 2026-08-28
+    domains: [operations, architecture]
+    scope: 점진적 인프라 현대화와 다중 환경 검증 사례
+    storesOriginal: false
+  - id: toss-legacy-zero-trust
+    title: 경계 보안부터 제로트러스트 보안까지, 고도화 여정
+    url: https://toss.tech/article/payments-legacy-10
+    publisher: Toss Tech
+    checkedAt: 2026-08-28
+    domains: [security, operations]
+    scope: 가맹점 경계를 포함한 단계적 보안 고도화 사례
+    storesOriginal: false
+  - id: toss-legacy-pqc-ko
+    title: 양자컴퓨터 시대에 대비한 양자내성암호 적용
+    url: https://toss.tech/article/post-quantum-cryptography
+    publisher: Toss Tech
+    checkedAt: 2026-08-28
+    domains: [security, architecture]
+    scope: 가맹점 호환성을 유지하는 보안 프로토콜 전환 사례
+    storesOriginal: false
+  - id: toss-legacy-pqc-en
+    title: Why We Adopted Post-Quantum Cryptography a Decade Before Quantum Computers Arrive
+    url: https://toss.tech/article/post-quantum-cryptography-eng
+    publisher: Toss Tech
+    checkedAt: 2026-08-28
+    domains: [security, architecture]
+    scope: 한국어 PQC 아티클의 공식 영문판
+    storesOriginal: false

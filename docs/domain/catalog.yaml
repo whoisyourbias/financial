@@ -7,410 +7,465 @@ documents:
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
+    appliesTo: ["all"]
     sourceRefs: []
     evidenceRefs: []
   - id: master-plan
-    title: "6개월 AI 금융 백엔드 마스터플랜"
+    title: "토스페이먼츠 공개 계약 기반 PG 샌드박스 마스터플랜"
     path: MASTER_PLAN.md
     kind: plan
-    domains: [repository]
+    domains: [repository, payment, operations]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
-    sourceRefs: []
+    appliesTo: ["all"]
+    sourceRefs: [toss-payments-llms-index, toss-payments-core-api, toss-payments-webhook-guide, toss-payments-virtual-account, toss-legacy-series]
     evidenceRefs: []
   - id: repository-readme
-    title: "AI-Native Financial Backend Lab"
+    title: "Toss Payments Contract Sandbox Lab"
     path: README.md
     kind: domain
-    domains: [repository]
+    domains: [repository, payment]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
-    sourceRefs: []
+    appliesTo: ["all"]
+    sourceRefs: [toss-payments-llms-index, toss-payments-core-api, toss-payments-request-response]
     evidenceRefs: []
   - id: contracts-readme
-    title: "contracts — README"
+    title: "계약 자산 안내"
     path: contracts/README.md
     kind: domain
     domains: [repository]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
+    appliesTo: ["all"]
     sourceRefs: []
     evidenceRefs: []
   - id: docs-architecture-evolution
-    title: "docs — ARCHITECTURE EVOLUTION"
+    title: "PG 샌드박스 아키텍처 진화"
     path: docs/ARCHITECTURE_EVOLUTION.md
     kind: architecture
-    domains: [repository]
+    domains: [repository, payment, operations]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
-    sourceRefs: []
+    appliesTo: ["all"]
+    sourceRefs: [toss-legacy-infrastructure, toss-legacy-data-serving]
     evidenceRefs: []
   - id: docs-evaluation-gates
-    title: "docs — EVALUATION GATES"
+    title: "평가 게이트"
     path: docs/EVALUATION_GATES.md
     kind: domain
     domains: [repository]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
+    appliesTo: ["all"]
     sourceRefs: []
     evidenceRefs: []
   - id: docs-evidence-policy
-    title: "docs — EVIDENCE POLICY"
+    title: "증거 정책"
     path: docs/EVIDENCE_POLICY.md
     kind: policy
     domains: [repository]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
+    appliesTo: ["all"]
     sourceRefs: []
     evidenceRefs: []
   - id: docs-harness-engineering-plan
-    title: "docs — HARNESS ENGINEERING PLAN"
+    title: "Harness Engineering Plan"
     path: docs/HARNESS_ENGINEERING_PLAN.md
     kind: plan
     domains: [repository]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
+    appliesTo: ["all"]
     sourceRefs: [codex-agents, spring-boot-4-1, gradle-9-7-1, postgresql-18-6, testcontainers-2-0-5, github-actions-secure-use]
     evidenceRefs: []
   - id: docs-market-alignment
-    title: "docs — MARKET ALIGNMENT"
+    title: "시장 정렬 근거"
     path: docs/MARKET_ALIGNMENT.md
     kind: domain
     domains: [repository]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
+    appliesTo: ["all"]
     sourceRefs: []
     evidenceRefs: []
-  - id: docs-tech-baseline
-    title: "docs — TECH BASELINE"
-    path: docs/TECH_BASELINE.md
-    kind: policy
-    domains: [repository]
+  - id: docs-product-vision
+    title: "토스페이먼츠 공개 계약 기반 PG 샌드박스 제품 비전"
+    path: docs/PRODUCT_VISION.md
+    kind: domain
+    domains: [payment, settlement, operations, FDS, RAG, agent]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
+    appliesTo: ["all"]
+    sourceRefs: [toss-payments-online-payment, toss-payments-core-api, toss-payments-webhook-guide, toss-payments-virtual-account, toss-payments-settlement]
+    evidenceRefs: []
+  - id: docs-domain-study-playbook
+    title: "결제 도메인 학습 규칙"
+    path: docs/DOMAIN_STUDY_PLAYBOOK.md
+    kind: policy
+    domains: [repository, ledger, payment, settlement, security, operations, FDS, RAG, agent]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["all"]
+    sourceRefs: [toss-payments-llms-index, toss-payments-llm-quick-reference, toss-legacy-series]
+    evidenceRefs: []
+  - id: docs-tech-baseline
+    title: "기술 기준선"
+    path: docs/TECH_BASELINE.md
+    kind: policy
+    domains: [repository, payment]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["all"]
     sourceRefs: []
     evidenceRefs: []
+  - id: docs-toss-payments-contract-matrix
+    title: "토스페이먼츠 선택 계약 매트릭스"
+    path: docs/TOSS_PAYMENTS_CONTRACT_MATRIX.md
+    kind: domain
+    domains: [payment, security, operations]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["all"]
+    sourceRefs: [toss-payments-core-api, toss-payments-cancel-guide, toss-payments-virtual-account, toss-payments-webhook-guide, toss-payments-idempotency]
+    evidenceRefs: []
+  - id: docs-toss-payments-evidence-map
+    title: "토스페이먼츠 근거 지도"
+    path: docs/TOSS_PAYMENTS_EVIDENCE_MAP.md
+    kind: domain
+    domains: [payment, settlement, operations]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["all"]
+    sourceRefs: [toss-payments-llms-index, toss-payments-llm-quick-reference, toss-legacy-series]
+    evidenceRefs: []
   - id: docs-domain-agents
-    title: "docs — domain — AGENTS"
+    title: "도메인 문서 작업 지침"
     path: docs/domain/AGENTS.md
     kind: policy
     domains: [repository]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
+    appliesTo: ["all"]
     sourceRefs: []
     evidenceRefs: []
   - id: frontend-agents
-    title: "frontend — AGENTS"
+    title: "프론트엔드 작업 지침"
     path: frontend/AGENTS.md
     kind: policy
     domains: [repository]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
+    appliesTo: ["all"]
     sourceRefs: []
     evidenceRefs: []
   - id: frontend-readme
-    title: "frontend — README"
+    title: "프론트엔드 안내"
     path: frontend/README.md
     kind: domain
     domains: [repository]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
+    appliesTo: ["all"]
     sourceRefs: []
     evidenceRefs: []
   - id: platform-agents
-    title: "platform — AGENTS"
+    title: "플랫폼 작업 지침"
     path: platform/AGENTS.md
     kind: policy
     domains: [repository]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
+    appliesTo: ["all"]
     sourceRefs: []
     evidenceRefs: []
-  - id: projects-01-ledger-core-exit-criteria
-    title: "01-ledger-core 종료 기준"
-    path: projects/01-ledger-core/EXIT_CRITERIA.md
-    kind: exit-criteria
-    domains: [repository]
+  - id: projects-01-ledger-core-domain-brief
+    title: "01 결제·원장 도메인 브리프"
+    path: projects/01-ledger-core/DOMAIN_BRIEF.md
+    kind: domain
+    domains: [ledger, payment]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["01"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-online-payment, toss-payments-core-api, toss-payments-transaction-flow]
     evidenceRefs: []
   - id: projects-01-ledger-core-plan
-    title: "01-ledger-core 구현 계획"
+    title: "01 결제 계약과 불변 결제 원장 계획"
     path: projects/01-ledger-core/PLAN.md
     kind: plan
-    domains: [repository]
+    domains: [ledger, payment]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["01"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-core-api, toss-payments-request-response, toss-payments-data-types, toss-legacy-ledger]
     evidenceRefs: []
-  - id: projects-02-transfer-concurrency-exit-criteria
-    title: "02-transfer-concurrency 종료 기준"
-    path: projects/02-transfer-concurrency/EXIT_CRITERIA.md
+  - id: projects-01-ledger-core-exit-criteria
+    title: "01 결제 계약과 불변 결제 원장 종료 기준"
+    path: projects/01-ledger-core/EXIT_CRITERIA.md
     kind: exit-criteria
-    domains: [repository]
+    domains: [ledger, payment]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["01"]
+    sourceRefs: [toss-payments-core-api]
+    evidenceRefs: []
+  - id: projects-02-payment-command-concurrency-plan
+    title: "02 결제 명령과 동시성 계획"
+    path: projects/02-payment-command-concurrency/PLAN.md
+    kind: plan
+    domains: [payment]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["02"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-core-api, toss-payments-cancel-guide, toss-payments-idempotency, toss-payments-error-codes, toss-legacy-open-api]
     evidenceRefs: []
-  - id: projects-02-transfer-concurrency-plan
-    title: "02-transfer-concurrency 구현 계획"
-    path: projects/02-transfer-concurrency/PLAN.md
-    kind: plan
-    domains: [repository]
+  - id: projects-02-payment-command-concurrency-exit-criteria
+    title: "02 결제 명령과 동시성 종료 기준"
+    path: projects/02-payment-command-concurrency/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [payment]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["02"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-core-api, toss-payments-idempotency]
     evidenceRefs: []
-  - id: projects-03-reliable-events-exit-criteria
-    title: "03-reliable-events 종료 기준"
-    path: projects/03-reliable-events/EXIT_CRITERIA.md
-    kind: exit-criteria
-    domains: [repository]
+  - id: projects-03-reliable-webhooks-plan
+    title: "03 신뢰성 있는 웹훅 계획"
+    path: projects/03-reliable-webhooks/PLAN.md
+    kind: plan
+    domains: [payment, operations]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["03"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-webhook-guide, toss-payments-webhook-events, toss-payments-status-page, toss-legacy-infrastructure]
     evidenceRefs: []
-  - id: projects-03-reliable-events-plan
-    title: "03-reliable-events 구현 계획"
-    path: projects/03-reliable-events/PLAN.md
-    kind: plan
-    domains: [repository]
+  - id: projects-03-reliable-webhooks-exit-criteria
+    title: "03 신뢰성 있는 웹훅 종료 기준"
+    path: projects/03-reliable-webhooks/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [payment, operations]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["03"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-webhook-guide, toss-payments-webhook-events]
     evidenceRefs: []
-  - id: projects-04-reconciliation-batch-exit-criteria
-    title: "04-reconciliation-batch 종료 기준"
-    path: projects/04-reconciliation-batch/EXIT_CRITERIA.md
-    kind: exit-criteria
-    domains: [repository]
+  - id: projects-04-virtual-account-reconciliation-plan
+    title: "04 가상계좌 입금과 대사 계획"
+    path: projects/04-virtual-account-reconciliation/PLAN.md
+    kind: plan
+    domains: [payment, operations]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["04"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-virtual-account, toss-payments-virtual-account-webhook, toss-payments-webhook-guide, toss-legacy-data-serving]
     evidenceRefs: []
-  - id: projects-04-reconciliation-batch-plan
-    title: "04-reconciliation-batch 구현 계획"
-    path: projects/04-reconciliation-batch/PLAN.md
-    kind: plan
-    domains: [repository]
+  - id: projects-04-virtual-account-reconciliation-exit-criteria
+    title: "04 가상계좌 입금과 대사 종료 기준"
+    path: projects/04-virtual-account-reconciliation/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [payment, operations]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["04"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-virtual-account, toss-payments-virtual-account-webhook]
     evidenceRefs: []
-  - id: projects-05-security-audit-exit-criteria
-    title: "05-security-audit 종료 기준"
-    path: projects/05-security-audit/EXIT_CRITERIA.md
-    kind: exit-criteria
-    domains: [repository]
-    status: planned
-    version: "1.0"
-    reviewedAt: 2026-08-28
-    appliesTo: ["05"]
-    sourceRefs: []
-    evidenceRefs: []
-  - id: projects-05-security-audit-plan
-    title: "05-security-audit 구현 계획"
-    path: projects/05-security-audit/PLAN.md
+  - id: projects-05-merchant-api-security-plan
+    title: "05 상점 API 보안과 감사 계획"
+    path: projects/05-merchant-api-security/PLAN.md
     kind: plan
-    domains: [repository]
+    domains: [payment, security]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["05"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-api-keys, toss-payments-secret-key-practice, toss-payments-security, toss-payments-environment, toss-legacy-zero-trust]
     evidenceRefs: []
-  - id: projects-06-operability-cloud-exit-criteria
-    title: "06-operability-cloud 종료 기준"
-    path: projects/06-operability-cloud/EXIT_CRITERIA.md
+  - id: projects-05-merchant-api-security-exit-criteria
+    title: "05 상점 API 보안과 감사 종료 기준"
+    path: projects/05-merchant-api-security/EXIT_CRITERIA.md
     kind: exit-criteria
-    domains: [repository]
+    domains: [payment, security]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: ["06"]
-    sourceRefs: []
+    appliesTo: ["05"]
+    sourceRefs: [toss-payments-api-keys, toss-payments-security]
     evidenceRefs: []
   - id: projects-06-operability-cloud-plan
-    title: "06-operability-cloud 구현 계획"
+    title: "06 결제 샌드박스 운영성과 클라우드 계획"
     path: projects/06-operability-cloud/PLAN.md
     kind: plan
-    domains: [repository]
+    domains: [payment, operations]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["06"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-status-page, toss-payments-deploy-checklist, toss-payments-environment]
     evidenceRefs: []
-  - id: projects-07-payment-lifecycle-exit-criteria
-    title: "07-payment-lifecycle 종료 기준"
-    path: projects/07-payment-lifecycle/EXIT_CRITERIA.md
+  - id: projects-06-operability-cloud-exit-criteria
+    title: "06 결제 샌드박스 운영성과 클라우드 종료 기준"
+    path: projects/06-operability-cloud/EXIT_CRITERIA.md
     kind: exit-criteria
-    domains: [repository]
+    domains: [payment, operations]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["06"]
+    sourceRefs: [toss-payments-status-page, toss-payments-deploy-checklist]
+    evidenceRefs: []
+  - id: projects-07-api-compat-migration-plan
+    title: "07 API 호환 마이그레이션 계획"
+    path: projects/07-api-compat-migration/PLAN.md
+    kind: plan
+    domains: [payment, operations]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["07"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-versioning, toss-payments-request-response, toss-payments-error-codes, toss-legacy-open-api, toss-legacy-configuration]
     evidenceRefs: []
-  - id: projects-07-payment-lifecycle-plan
-    title: "07-payment-lifecycle 구현 계획"
-    path: projects/07-payment-lifecycle/PLAN.md
-    kind: plan
-    domains: [repository]
+  - id: projects-07-api-compat-migration-exit-criteria
+    title: "07 API 호환 마이그레이션 종료 기준"
+    path: projects/07-api-compat-migration/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [payment, operations]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["07"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-versioning, toss-payments-request-response]
     evidenceRefs: []
-  - id: projects-08-partner-settlement-exit-criteria
-    title: "08-partner-settlement 종료 기준"
-    path: projects/08-partner-settlement/EXIT_CRITERIA.md
-    kind: exit-criteria
-    domains: [repository]
+  - id: projects-08-settlement-engine-plan
+    title: "08 상점 정산 엔진 계획"
+    path: projects/08-settlement-engine/PLAN.md
+    kind: plan
+    domains: [ledger, payment, settlement]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["08"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-settlement, toss-payments-data-types, toss-legacy-settlement, toss-legacy-ledger]
     evidenceRefs: []
-  - id: projects-08-partner-settlement-plan
-    title: "08-partner-settlement 구현 계획"
-    path: projects/08-partner-settlement/PLAN.md
-    kind: plan
-    domains: [repository]
+  - id: projects-08-settlement-engine-exit-criteria
+    title: "08 상점 정산 엔진 종료 기준"
+    path: projects/08-settlement-engine/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [ledger, payment, settlement]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["08"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-settlement, toss-payments-data-types]
     evidenceRefs: []
-  - id: projects-09-service-extraction-exit-criteria
-    title: "09-service-extraction 종료 기준"
-    path: projects/09-service-extraction/EXIT_CRITERIA.md
-    kind: exit-criteria
-    domains: [repository]
-    status: planned
-    version: "1.0"
-    reviewedAt: 2026-08-28
-    appliesTo: ["09"]
-    sourceRefs: []
-    evidenceRefs: []
-  - id: projects-09-service-extraction-plan
-    title: "09-service-extraction 구현 계획"
-    path: projects/09-service-extraction/PLAN.md
+  - id: projects-09-payment-read-model-extraction-plan
+    title: "09 결제 조회 모델과 서비스 경계 계획"
+    path: projects/09-payment-read-model-extraction/PLAN.md
     kind: plan
-    domains: [repository]
+    domains: [payment, operations]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["09"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-core-api, toss-payments-request-response, toss-legacy-data-serving, toss-legacy-infrastructure]
     evidenceRefs: []
-  - id: projects-10-fraud-detection-exit-criteria
-    title: "10-fraud-detection 종료 기준"
-    path: projects/10-fraud-detection/EXIT_CRITERIA.md
+  - id: projects-09-payment-read-model-extraction-exit-criteria
+    title: "09 결제 조회 모델과 서비스 경계 종료 기준"
+    path: projects/09-payment-read-model-extraction/EXIT_CRITERIA.md
     kind: exit-criteria
-    domains: [repository]
+    domains: [payment, operations]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: ["10"]
-    sourceRefs: []
+    appliesTo: ["09"]
+    sourceRefs: [toss-payments-core-api]
     evidenceRefs: []
   - id: projects-10-fraud-detection-plan
-    title: "10-fraud-detection 구현 계획"
+    title: "10 결제 이상거래 탐지 계획"
     path: projects/10-fraud-detection/PLAN.md
     kind: plan
-    domains: [repository]
+    domains: [payment, FDS]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["10"]
+    sourceRefs: [toss-payments-transaction-flow]
+    evidenceRefs: []
+  - id: projects-10-fraud-detection-exit-criteria
+    title: "10 결제 이상거래 탐지 종료 기준"
+    path: projects/10-fraud-detection/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [payment, FDS]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["10"]
     sourceRefs: []
     evidenceRefs: []
-  - id: projects-11-financial-rag-exit-criteria
-    title: "11-financial-rag 종료 기준"
-    path: projects/11-financial-rag/EXIT_CRITERIA.md
-    kind: exit-criteria
-    domains: [repository]
-    status: planned
-    version: "1.0"
-    reviewedAt: 2026-08-28
-    appliesTo: ["11"]
-    sourceRefs: []
-    evidenceRefs: []
-  - id: projects-11-financial-rag-plan
-    title: "11-financial-rag 구현 계획"
-    path: projects/11-financial-rag/PLAN.md
+  - id: projects-11-payment-ops-rag-plan
+    title: "11 결제 운영 지식 RAG 계획"
+    path: projects/11-payment-ops-rag/PLAN.md
     kind: plan
-    domains: [repository]
+    domains: [payment, operations, RAG]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["11"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-llms-index, toss-payments-llm-quick-reference, toss-legacy-series]
     evidenceRefs: []
-  - id: projects-12-responsible-agent-exit-criteria
-    title: "12-responsible-agent 종료 기준"
-    path: projects/12-responsible-agent/EXIT_CRITERIA.md
+  - id: projects-11-payment-ops-rag-exit-criteria
+    title: "11 결제 운영 지식 RAG 종료 기준"
+    path: projects/11-payment-ops-rag/EXIT_CRITERIA.md
     kind: exit-criteria
-    domains: [repository]
+    domains: [payment, operations, RAG]
+    status: planned
+    version: "1.0"
+    reviewedAt: 2026-08-28
+    appliesTo: ["11"]
+    sourceRefs: [toss-payments-llms-index]
+    evidenceRefs: []
+  - id: projects-12-responsible-ops-agent-plan
+    title: "12 책임 있는 결제 운영 에이전트 계획"
+    path: projects/12-responsible-ops-agent/PLAN.md
+    kind: plan
+    domains: [payment, operations, agent]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
     appliesTo: ["12"]
-    sourceRefs: []
+    sourceRefs: [toss-payments-core-api, toss-payments-webhook-guide]
     evidenceRefs: []
-  - id: projects-12-responsible-agent-plan
-    title: "12-responsible-agent 구현 계획"
-    path: projects/12-responsible-agent/PLAN.md
-    kind: plan
-    domains: [repository]
+  - id: projects-12-responsible-ops-agent-exit-criteria
+    title: "12 책임 있는 결제 운영 에이전트 종료 기준"
+    path: projects/12-responsible-ops-agent/EXIT_CRITERIA.md
+    kind: exit-criteria
+    domains: [payment, operations, agent]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
@@ -418,35 +473,35 @@ documents:
     sourceRefs: []
     evidenceRefs: []
   - id: reviews-final-audit-plan
-    title: "reviews — FINAL AUDIT PLAN"
+    title: "최종 감사 계획"
     path: reviews/FINAL_AUDIT_PLAN.md
     kind: review
     domains: [repository]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
+    appliesTo: ["all"]
     sourceRefs: []
     evidenceRefs: []
   - id: reviews-plan-portfolio-review
-    title: "reviews — PLAN PORTFOLIO REVIEW"
+    title: "이전 계획 포트폴리오 리뷰"
     path: reviews/PLAN_PORTFOLIO_REVIEW.md
     kind: review
     domains: [repository]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
+    appliesTo: ["all"]
     sourceRefs: []
     evidenceRefs: []
   - id: reviews-plan-redteam-review
-    title: "reviews — PLAN REDTEAM REVIEW"
+    title: "이전 계획 레드팀 리뷰"
     path: reviews/PLAN_REDTEAM_REVIEW.md
     kind: review
     domains: [repository]
     status: planned
     version: "1.0"
     reviewedAt: 2026-08-28
-    appliesTo: [all]
+    appliesTo: ["all"]
     sourceRefs: []
     evidenceRefs: []

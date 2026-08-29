@@ -1,8 +1,20 @@
-# AI-Native Financial Backend Lab
+# Toss Payments Contract Sandbox Lab
 
-> 1~3년차 Java/Spring 금융 백엔드 개발자를 목표로, 하나의 금융 플랫폼을 6개월 동안 단계적으로 진화시키는 포트폴리오 계획입니다.
+> 토스페이먼츠 V2 공개 계약의 선정 부분을 계약 테스트로 재현하는 학습용 PG 샌드박스를 6개월 동안 단계적으로 진화시키는 Java/Spring 백엔드 포트폴리오입니다.
 
 현재 상태는 **공통 하네스와 프로젝트 01 실행 골격 구현, 금융 기능 구현 전**입니다. `Money`, account migration·저장 smoke test는 하네스 검증용 최소 수직 절단이며 프로젝트 01의 journal·posting 완료를 의미하지 않습니다. 구현·측정·검증이 끝나지 않은 숫자와 기술 표현은 성과로 취급하지 않습니다.
+
+## 모방할 제품과 범위
+
+대표 제품 기준은 **토스페이먼츠 개발자·상점 운영 경험**입니다. 승인·조회·취소·가상계좌·webhook의 선정 V2 계약을 경로·헤더·상태·오류 단위로 추적하고, 내부 원장·이벤트·정산·AI 통제는 이 저장소에서 직접 설계합니다.
+
+- 제품 정의와 모방 경계: [PRODUCT_VISION.md](docs/PRODUCT_VISION.md)
+- 공식 문서·레거시 사례 근거 지도: [TOSS_PAYMENTS_EVIDENCE_MAP.md](docs/TOSS_PAYMENTS_EVIDENCE_MAP.md)
+- 선정 API 계약과 테스트 추적: [TOSS_PAYMENTS_CONTRACT_MATRIX.md](docs/TOSS_PAYMENTS_CONTRACT_MATRIX.md)
+- 프로젝트별 도메인 학습법: [DOMAIN_STUDY_PLAYBOOK.md](docs/DOMAIN_STUDY_PLAYBOOK.md)
+- 프로젝트 01 첫 적용: [DOMAIN_BRIEF.md](projects/01-ledger-core/DOMAIN_BRIEF.md)
+
+실제 토스페이먼츠 연동이나 내부 구조 재현을 주장하지 않으며 브랜드·UI 자산을 복제하지 않습니다.
 
 ## 이 포트폴리오가 증명하려는 것
 
@@ -16,17 +28,17 @@
 
 최종 포트폴리오에는 12개 회차를 모두 전면에 내세우지 않습니다. 아래 네 사례를 대표로 보여주고, 나머지는 진화 과정의 근거로 연결합니다.
 
-1. **원장과 안전한 이체** — [복식부기 원장](projects/01-ledger-core/PLAN.md), [계좌이체와 동시성](projects/02-transfer-concurrency/PLAN.md)
-2. **결제 신뢰성과 서비스 경계** — [결제 상태 머신](projects/07-payment-lifecycle/PLAN.md), [파트너 정산](projects/08-partner-settlement/PLAN.md), [서비스 분리 실험](projects/09-service-extraction/PLAN.md)
+1. **공개 계약과 결제 정합성** — [결제 원장](projects/01-ledger-core/PLAN.md), [승인·조회·취소](projects/02-payment-command-concurrency/PLAN.md)
+2. **결제 복구와 점진적 개편** — [신뢰 가능한 webhook](projects/03-reliable-webhooks/PLAN.md), [호환 API 개편](projects/07-api-compat-migration/PLAN.md), [정산 엔진](projects/08-settlement-engine/PLAN.md), [조회·서비스 경계](projects/09-payment-read-model-extraction/PLAN.md)
 3. **근거가 제한된 AI 이상거래 탐지** — [AI FDS](projects/10-fraud-detection/PLAN.md)
-4. **통제 가능한 금융 AI** — [금융 RAG](projects/11-financial-rag/PLAN.md), [책임 있는 Agent](projects/12-responsible-agent/PLAN.md)
+4. **통제 가능한 결제 운영 AI** — [결제 운영 RAG](projects/11-payment-ops-rag/PLAN.md), [책임 있는 운영 Agent](projects/12-responsible-ops-agent/PLAN.md)
 
 ## 6개월 흐름
 
 ```text
-원장 → 동시성 이체 → 신뢰 가능한 이벤트 → 대사 배치 → 보안·감사
-  → 관측성·1차 클라우드 → 결제 → 파트너 정산 → 서비스 분리 실험
-  → AI FDS → 금융 RAG → 승인 기반 Agent → 최종 감사·2차 클라우드
+계약·원장 → 승인·조회·취소 → webhook → 가상계좌·대사 → MID·보안
+  → 관측성·1차 클라우드 → 호환 개편 → 정산 → 조회·서비스 경계
+  → 결제 FDS → 운영 RAG → 승인 기반 Agent → 최종 계약 감사
 ```
 
 - 기간: 2026-08-31 ~ 2027-02-28
@@ -96,7 +108,7 @@ Windows에서는 `./gradlew` 대신 `gradlew.bat`를 사용합니다. Docker가 
 3. `hiring-sim-portfolio-redteam`으로 수치·서사·용어를 적대적으로 검증
 4. 🔴 High 0건일 때만 `RELEASED`와 Git 태그 부여
 
-현재 계획 자체의 평가는 [포트폴리오 리뷰](reviews/PLAN_PORTFOLIO_REVIEW.md)와 [레드팀 사전 분석](reviews/PLAN_REDTEAM_REVIEW.md)에 기록했습니다.
+기존 [포트폴리오 리뷰](reviews/PLAN_PORTFOLIO_REVIEW.md)와 [레드팀 사전 분석](reviews/PLAN_REDTEAM_REVIEW.md)은 PG 샌드박스 전환 이전 계획을 대상으로 한 이력입니다. 현재 계획은 구현 전 별도 리뷰가 필요합니다.
 
 ## 범위와 면책
 

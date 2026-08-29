@@ -26,17 +26,19 @@ patch 업데이트는 기능 개발과 분리합니다. 보안·호환성 이유
 platform/
 ├── bootstrap
 ├── ledger
-├── transfer
-├── reconciliation
-├── identity-audit
 ├── payment
+├── webhook
+├── virtual-account
+├── settlement
+├── identity-audit
+├── merchant-sample
 └── shared-kernel
 ```
 
 - 도메인 모듈은 다른 모듈의 영속 엔티티나 repository에 직접 접근하지 않습니다.
 - `shared-kernel`에는 `Money`, 식별자, 시간 추상화, 오류 계약처럼 정말 공통인 값만 둡니다.
 - 편의를 위한 공용 서비스 모음은 만들지 않습니다.
-- 프로젝트 09에서 `payment`만 별도 프로세스로 분리해보고, 비용이 이점보다 크면 원복할 수 있습니다.
+- 프로젝트 09에서 payment command와 read model 경계를 별도 프로세스로 분리해보고, 비용이 이점보다 크면 원복할 수 있습니다.
 - FDS와 AI는 핵심 원장과 다른 실패 경계를 가지며, 장애가 거래 기록을 막지 않도록 비동기 소비자 또는 읽기 전용 인터페이스로 연결합니다.
 
 ## 금액 계약
@@ -54,7 +56,7 @@ public record Money(long amountMinor, Currency currency) {}
 
 ## 변경 API 계약
 
-모든 상태 변경 API는 `Idempotency-Key`를 요구합니다.
+토스페이먼츠 공개 계약이 지원한다고 명시한 POST API는 공개 `Idempotency-Key` 동작을 따릅니다. sandbox 관리 API와 내부 command는 별도 정책으로 같은 키·같은 본문의 한 비즈니스 결과를 강제합니다.
 
 - 키의 유효 범위는 `호출 주체 + 작업 종류 + 키`입니다.
 - 같은 키와 같은 요청은 처음 확정된 결과를 반환합니다.
@@ -66,23 +68,23 @@ public record Money(long amountMinor, Currency currency) {}
 
 ```json
 {
-  "code": "TRANSFER_INSUFFICIENT_FUNDS",
-  "message": "요청을 처리할 수 없습니다.",
-  "correlationId": "...",
-  "details": []
+  "code": "ALREADY_PROCESSED_PAYMENT",
+  "message": "요청을 처리할 수 없습니다."
 }
 ```
 
 - `message`에 개인정보·내부 SQL·스택트레이스를 포함하지 않습니다.
 - 클라이언트 분기는 `code`를 사용합니다.
 - HTTP 상태와 비즈니스 코드를 API 문서에 함께 기록합니다.
+- public 호환 API의 Error body에는 문서화하지 않은 필드를 추가하지 않습니다.
+- correlation ID와 상세 진단은 응답 헤더·내부 로그에 두고, `/sandbox/**`·`/sandbox/ops/**` 확장 응답은 별도 schema로 표시합니다.
 
 ## 이벤트 계약
 
 ```json
 {
   "eventId": "uuid",
-  "eventType": "transfer.completed",
+  "eventType": "payment.status.changed",
   "schemaVersion": 1,
   "occurredAt": "2026-09-01T00:00:00Z",
   "correlationId": "uuid",
@@ -142,8 +144,8 @@ Agent는 `APPROVE`와 `EXECUTE` 권한을 가지지 않습니다.
 | --------------------- | -------------- | ----------------------------------------------- |
 | PostgreSQL·Flyway     | 01             | 원장 영속성과 migration 재현                    |
 | Testcontainers        | 01             | 실제 DB 제약과 트랜잭션 검증                    |
-| Kafka 호환 브로커     | 03             | 중복·지연·재처리 실험 필요                      |
-| Spring Batch          | 04             | restartable reconciliation job 필요             |
+| Kafka 호환 브로커     | 03             | webhook 발행·수신의 중복·지연·재처리 실험 필요  |
+| Spring Batch          | 04             | restartable 가상계좌 대사와 정산 job 필요        |
 | OAuth2/JWT            | 05             | 역할·주체별 접근 통제 필요                      |
 | OpenTelemetry·Grafana | 06             | 트랜잭션·이벤트·batch 연결 관측                 |
 | AWS ECS/RDS·Terraform | 06             | 1차 클라우드 쇼케이스                           |
