@@ -106,9 +106,9 @@ Windows에서는 `./gradlew` 대신 `gradlew.bat`를 사용합니다. Docker가 
 1. 자동화 테스트와 증거 묶음 확인
 2. `hiring-sim-portfolio-review`로 PASS/REJECT 판정
 3. `hiring-sim-portfolio-redteam`으로 수치·서사·용어를 적대적으로 검증
-4. 🔴 High 0건일 때만 `RELEASED`와 Git 태그 부여
+4. 두 보고서가 같은 동결 payload SHA의 PASS·High 0을 증명하면 reports-only attestation commit을 `RELEASE_CANDIDATE`로 삼고, tag·manifest를 검증한 뒤 `RELEASED`
 
-기존 [포트폴리오 리뷰](reviews/PLAN_PORTFOLIO_REVIEW.md)와 [레드팀 사전 분석](reviews/PLAN_REDTEAM_REVIEW.md)은 PG 샌드박스 전환 이전 계획을 대상으로 한 이력입니다. 현재 계획은 구현 전 별도 리뷰가 필요합니다.
+기존 [포트폴리오 리뷰](reviews/PLAN_PORTFOLIO_REVIEW.md)와 [레드팀 사전 분석](reviews/PLAN_REDTEAM_REVIEW.md)은 PG 샌드박스 전환 이전 계획을 대상으로 한 보존 이력이며 현재 knowledge catalog와 판정에서 제외합니다. 현재 계획은 구현 전 별도 리뷰가 필요합니다.
 
 ## 범위와 면책
 

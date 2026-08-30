@@ -7,18 +7,33 @@
 ## 선행 조건
 
 - 프로젝트 02의 승인·취소 멱등성
+- 프로젝트 03의 웹훅 전달·재전송
+- 프로젝트 04의 가상계좌 대사
 - 프로젝트 05의 MID·역할·감사
+- 프로젝트 08의 정산 adjustment
 - 프로젝트 10의 위험 신호
 - 프로젝트 11의 근거 있는 검색
 
-## 도구 등급
+## 권한·위험·credential 경계
 
-- `READ`: 결제·웹훅·대사·정산 조회
-- `PROPOSE`: 환불, 웹훅 재전송, 대사 보정의 실행 계획 생성
-- `WRITE_LOW_RISK`: 명시적 정책이 허용한 비금전 조치
-- `WRITE_FINANCIAL`: 취소·정산 조정처럼 금액에 영향을 주는 조치
+`LOW_RISK`와 `FINANCIAL`은 action의 risk class이며 Agent 권한 이름이 아닙니다. Agent는 항상 `READ`와 `PROPOSE`만 가집니다.
 
-`WRITE_FINANCIAL`은 기본 거부이며 권한 있는 사람의 명시적 승인과 실행 직전 재검증이 필요합니다.
+| risk class | Agent 동작 | 실제 호출 주체 | credential 소유자 | 승인자 | executor |
+| --- | --- | --- | --- | --- | --- |
+| `READ_ONLY` | 허용된 schema로 조회·근거 인용 | Agent read adapter | 범위 제한 read service account | 불필요 | read service |
+| `LOW_RISK` | 웹훅 재전송 같은 조치 초안만 생성 | 인증된 사람의 별도 approval API | deterministic operations service | 해당 MID 역할의 사람 | 승인 ID를 검증한 operations service |
+| `FINANCIAL` | 취소·정산 조정 초안만 생성 | 인증된 사람의 별도 approval API | deterministic payment/settlement service | 금액 권한이 있는 사람 | 승인 ID·버전·만료·요청 해시를 재검증한 payment/settlement service |
+
+Agent process에는 approval·execute credential을 주입하지 않습니다. 승인자는 Agent 세션이 아닌 별도 인증 API에서 승인하고, executor는 모델 출력이 아니라 versioned proposal과 approval record만 입력으로 받습니다.
+
+## 필수 범위
+
+- read-only 타임아웃 진단 1개와 근거 인용
+- 부분 취소 proposal 1개를 사람 승인 API와 deterministic executor까지 연결
+- stale approval·replay·cross-MID·prompt injection 공격
+- 신규·queued·pre-commit 실행을 막는 kill switch와 수동 대체 런북
+
+웹훅 재전송, 가상계좌 대사, 정산 adjustment 시나리오는 선행 프로젝트 데이터를 조회하는 contract test까지만 필수입니다. 추가 쓰기 도구와 운영 UI는 확장 범위이며 필수 게이트 완료 전 시작하지 않습니다.
 
 ## 불변식
 
@@ -29,6 +44,8 @@
 5. 쓰기 도구는 멱등키와 전후 상태를 감사 로그에 남깁니다.
 6. prompt injection은 정책·도구 스키마·MID 경계를 변경하지 못합니다.
 7. 모델 장애 시 사람이 같은 런북으로 작업할 수 있습니다.
+8. 금융 write의 linearization point는 executor의 도메인 transaction commit입니다. kill switch는 신규·queued 요청을 거절하고 pre-commit에서 다시 확인하지만, commit 이후 효과를 rollback했다고 표현하지 않습니다.
+9. commit 이후 실패나 외부 효과는 감사·조회·대사와 명시적 보상 command로 처리하며 model/policy rollback과 금융 보상을 구분합니다.
 
 ## 대표 시나리오
 
@@ -45,7 +62,7 @@
 3. read-only 진단과 근거 인용을 연결합니다.
 4. propose → approve → revalidate → execute 상태 머신을 구현합니다.
 5. prompt injection, 권한 상승, replay를 공격 테스트합니다.
-6. kill switch, rollback, 수동 대체 런북을 검증합니다.
+6. kill switch, model/policy rollback, commit 이후 대사·보상과 수동 대체 런북을 구분해 검증합니다.
 
 ## 평가
 
@@ -63,7 +80,7 @@
 - red-team prompt와 결과
 - 승인·재검증·멱등 실행 통합 테스트
 - kill switch 훈련 기록
-- `evidence/projects/12/` manifest
+- `projects/12-responsible-ops-agent/evidence/` manifest
 
 ## 근거
 

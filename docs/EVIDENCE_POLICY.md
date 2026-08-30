@@ -32,10 +32,70 @@ projects/<id>/evidence/
 └── results.md
 ```
 
+`MANIFEST.md`는 이 문서가 정의하는 공통 manifest 계약입니다. 별도의 존재하지 않는 schema 파일을 참조하지 않습니다. 구현 시작 전에 공통 harness가 이 필드를 검사하는 `evidenceCheck`를 제공하며, 해당 명령이 없거나 실패하면 프로젝트는 `EVIDENCE_READY`로 이동할 수 없습니다.
+
+파일은 다음 YAML front matter로 시작합니다. `schemaVersion`은 정수, `projectId`는 실제 디렉터리 ID, `sourceSha`는 40자리 commit SHA, `generatedAt`은 UTC ISO-8601, `intendedTags`는 하나 이상의 고유 문자열 목록입니다.
+
+```yaml
+---
+schemaVersion: 1
+projectId: 01-ledger-core
+sourceSha: 0123456789abcdef0123456789abcdef01234567
+generatedAt: 2026-09-01T00:00:00Z
+intendedTags:
+  - p01-ledger-core
+environment:
+  os: macOS-15.6
+  cpu: Apple-M3
+  memoryBytes: 17179869184
+  jvm: temurin-21.0.8
+  dependencies: [postgresql-18.6]
+commands:
+  - command: ./gradlew harnessFull
+    configPaths: [gradle/libs.versions.toml]
+dataset:
+  seed: "42"
+  size: 1000
+  distribution: fixed-fixture-v1
+  version: "1"
+datasetNotApplicableReason: null
+aiContext: null
+aiNotApplicableReason: "non-AI project"
+measurement:
+  warmupSeconds: 30
+  durationSeconds: 300
+  concurrency: 8
+  requestMix: fixed-mix-v1
+measurementNotApplicableReason: null
+artifacts:
+  - path: raw/result.json
+    sha256: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+    summaryRef: results.md#summary
+limitations:
+  - synthetic data only
+---
+```
+
+AI 프로젝트와 final audit는 위 두 AI 필드를 다음 object로 교체합니다.
+
+```yaml
+aiContext:
+  provider: local
+  model: example-model
+  modelVersion: "1"
+  promptSha256: null
+  promptNotApplicableReason: "non-generative model"
+  corpusVersion: synthetic-dataset-v1
+  corpusNotApplicableReason: null
+aiNotApplicableReason: null
+```
+
+front matter의 key와 type은 위 예시로 고정합니다. `schemaVersion`, `memoryBytes`, dataset `size`, measurement 숫자는 integer, 나머지 scalar는 string 또는 명시된 null, `intendedTags`·`dependencies`·`commands`·`configPaths`·`artifacts`·`limitations`는 목록입니다. AI 프로젝트 10~12와 `final-audit`의 `aiContext`는 non-null object이며 `provider`, `model`, `modelVersion`, `promptSha256`, `promptNotApplicableReason`, `corpusVersion`, `corpusNotApplicableReason` key를 모두 가집니다. SHA 필드는 non-null이면 64자리 lowercase hex이고, prompt나 corpus가 적용되지 않으면 값은 null, 대응 reason은 non-empty string이어야 합니다. 비AI 프로젝트만 `aiContext: null`과 non-empty `aiNotApplicableReason`을 허용합니다. `dataset`, `measurement`가 null일 때도 대응하는 `*NotApplicableReason`은 비어 있지 않아야 합니다. front matter 뒤에는 `Environment`, `Commands`, `Dataset`, `AI Context`, `Artifacts`, `Limitations` H2가 각각 정확히 한 번 있고 front matter를 사람이 검토할 설명과 링크를 제공합니다.
+
 `MANIFEST.md`에는 다음을 빠짐없이 기록합니다.
 
 - 프로젝트 ID와 결과 생성 시각
-- commit SHA와 Git tag
+- 검증 대상 구현의 `sourceSha`와 `intendedTags`; evidence commit 자체 SHA는 자기참조로 본문에 넣지 않음
 - OS, CPU, memory, JVM, container·DB·broker 버전
 - 실행 명령과 설정 파일 경로
 - 데이터셋 seed·크기·분포·버전
@@ -43,6 +103,33 @@ projects/<id>/evidence/
 - warm-up, duration, concurrency, request mix
 - raw 파일과 요약 표의 연결
 - known limitation과 재현 실패 조건
+
+계획 단계에는 빈 manifest나 결과 파일을 만들지 않습니다. 구현 증거가 생기면 프로젝트의 `projects/<id>/evidence/MANIFEST.md`를 생성하고 `./gradlew evidenceCheck -PtargetProject=<id>`로 검증합니다. tag 생성 전 manifest의 `intendedTags`는 필수지만 실제 tag는 아직 없어야 합니다.
+
+`evidenceCheck`는 `sourceSha..release-candidate`의 변경 경로도 검사합니다. 허용 경로는 `projects/**/evidence/**`, 프로젝트의 `RESULTS.md`·`PORTFOLIO_REVIEW.md`·`REDTEAM_REVIEW.md`, 루트 `README.md`, `reviews/**`뿐입니다. 코드·빌드·설정·migration·`contracts/**`·계약 매트릭스·OpenAPI를 포함해 allowlist 밖의 파일이 하나라도 바뀌면 기존 evidence를 무효화하고 변경 commit을 새 `sourceSha`로 전체 필수 검증을 다시 실행합니다.
+
+Portfolio Review와 Red Team을 통과한 evidence commit에 각 annotated tag를 만든 뒤, tag tree에 clean manifest가 있고 manifest의 `sourceSha`가 tag commit의 도달 가능한 조상이며 중간 diff가 allowlist만 포함하고 artifact가 그 source를 증명하는지 확인해야 `RELEASED`가 됩니다. 프로젝트 06처럼 프로젝트 tag와 showcase tag가 같은 candidate를 가리키면 두 이름을 `intendedTags`에 모두 기록합니다.
+
+최종 통합 쇼케이스는 `reviews/evidence/MANIFEST.md`를 aggregate manifest로 사용합니다. 같은 schema에서 `projectId: final-audit`, `intendedTags: [showcase-02-ai-payment-ops]`로 두고, `artifacts`가 12개 프로젝트 manifest checksum과 통합 회귀·AI 평가·cloud 제거 결과를 참조해야 합니다. `./gradlew evidenceCheck -PtargetProject=final-audit`는 이 특별 경로와 12개 하위 manifest 연결을 검사합니다.
+
+## 리뷰 attestation commit
+
+심사할 공개 payload를 commit `C0`으로 동결한 뒤 두 스킬을 `C0`에 실행합니다. 프로젝트 심사는 `projects/<id>/PORTFOLIO_REVIEW.md`와 `projects/<id>/REDTEAM_REVIEW.md`, 최종 감사는 `reviews/FINAL_PORTFOLIO_REVIEW.md`와 `reviews/FINAL_REDTEAM_REVIEW.md`만 추가한 직계 후속 commit `C1`을 만듭니다. 이 `C1`이 `REVIEWED`와 `RELEASE_CANDIDATE` 대상이며 `C0..C1`에는 해당 두 파일 이외의 tracked 변경이 없어야 합니다.
+
+두 리뷰 파일은 다음 front matter를 가집니다.
+
+```yaml
+---
+schemaVersion: 1
+reviewedSha: 0123456789abcdef0123456789abcdef01234567
+skill: hiring-sim-portfolio-review
+generatedAt: 2026-09-01T00:00:00Z
+verdict: PASS
+highCount: 0
+---
+```
+
+`reviewedSha`는 둘 다 `C0`, `verdict`는 Portfolio Review에서 `PASS`, Red Team에서는 `HIGH_0`이어야 합니다. Red Team의 `highCount`는 0이어야 하고 Portfolio Review의 적용되지 않는 count도 0으로 기록합니다. 보고서 생성 뒤 payload를 바꾸면 새 `C0`에서 두 심사를 모두 다시 실행합니다. tag는 검증된 attestation commit `C1`을 가리키며, 이때 “같은 commit 심사”는 같은 `reviewedSha` payload를 두 보고서가 증명한다는 뜻입니다.
 
 ## 수치 기록 계약
 

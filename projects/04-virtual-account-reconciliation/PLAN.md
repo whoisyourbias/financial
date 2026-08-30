@@ -4,13 +4,14 @@
 
 가상계좌 발급·입금·취소 흐름과 `DEPOSIT_CALLBACK`을 재현하고, 내부 결제 상태·원장·웹훅 전달 기록의 차이를 검출하고 복구합니다.
 
-## 범위
+## 필수 범위
 
 - `POST /v1/virtual-accounts`
+- 발급 필수값 `amount`, `orderId`, `orderName`, `customerName`, `bank`
 - 샌드박스 입금 주입: `POST /sandbox/v1/virtual-accounts/{paymentKey}/deposits`
 - `WAITING_FOR_DEPOSIT → DONE`
-- `DEPOSIT_CALLBACK`
-- 입금 전 취소와 입금 후 취소 규칙
+- `DEPOSIT_CALLBACK`의 `secret`·`transactionKey` 검증
+- 입금 전 전액 취소·부분 취소 금지와 입금 후 `refundReceiveAccount` 필수 규칙
 - 합성 은행 스냅샷을 이용한 정기 대사
 - Spring Batch 기반 재시작 가능한 대사 작업
 
@@ -19,10 +20,11 @@
 1. 가상계좌 발급은 같은 MID 안의 orderId와 amount에 묶입니다.
 2. 정확한 금액의 유효 입금만 결제를 완료합니다.
 3. 입금 상태, 원장 분개, 웹훅 outbox는 한 트랜잭션에서 기록합니다.
-4. 같은 입금 참조번호를 재수신해도 분개와 웹훅 사건은 하나입니다.
-5. 입금 전 취소와 입금 후 환불은 서로 다른 규칙으로 처리합니다.
-6. 대사 재실행은 이미 처리된 차이를 중복 보정하지 않습니다.
-7. 합성 계좌번호와 입금자명만 사용하며 실제 금융정보를 저장하지 않습니다.
+4. 같은 입금 `transactionKey`를 재수신해도 하나의 도메인 입금 사실과 business effect만 생성하며, 외부 event type·transmission별 전달 이력은 각각 보존합니다.
+5. 두 가상계좌 웹훅의 교차 전달은 `INT-WEBHOOK-002`의 guarded Payment 상태 전이와 입금 `transactionKey`로 한 번만 반영합니다.
+6. 입금 전에는 환불계좌 없이 전액 취소만 허용하고, 입금 후 취소는 유효한 환불 계좌를 요구합니다.
+7. 대사 재실행은 이미 처리된 차이를 중복 보정하지 않습니다.
+8. 합성 계좌번호와 입금자명만 사용하며 실제 금융정보를 저장하지 않습니다.
 
 ## 대사 분류
 
@@ -36,11 +38,11 @@
 
 ## 구현 순서
 
-1. 가상계좌 요청·응답과 상태·취소 규칙을 계약 테스트로 고정합니다.
+1. 가상계좌 필수 요청·응답, callback secret과 입금 전후 취소 규칙을 `TP-VA-001..002`, `TP-WEBHOOK-002..003`, `INT-WEBHOOK-002` 테스트로 고정합니다.
 2. 발급과 샌드박스 입금 어댑터를 구현합니다.
 3. 입금 완료·원장·웹훅을 원자적으로 연결합니다.
 4. 대사 분류기와 재시작 가능한 배치를 구현합니다.
-5. 차이 승인·재처리 운영 화면과 런북을 추가합니다.
+5. 차이 승인·재처리 API/CLI와 런북을 추가합니다.
 6. 대량 합성 데이터로 재시작·중복·부분 실패를 검증합니다.
 
 ## 검증 산출물
@@ -49,7 +51,11 @@
 - 입금 중복·금액 불일치·만료 테스트
 - 배치 restart/checkpoint 테스트
 - 대사 차이 manifest와 보정 감사 로그
-- `evidence/projects/04/` 재현 자료
+- `projects/04-virtual-account-reconciliation/evidence/` 재현 자료
+
+## 확장 범위
+
+브라우저 운영 화면과 추가 대사 분류는 프로젝트 06 이후의 확장이며 프로젝트 04의 필수 종료 조건이 아닙니다.
 
 ## 근거
 

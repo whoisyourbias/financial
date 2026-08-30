@@ -3,18 +3,19 @@
 ## 상태 모델
 
 ```text
-PLANNED → IN_PROGRESS → EVIDENCE_READY → REVIEWED → RELEASED
-                                                   ↘ HOLD
+PLANNED → IN_PROGRESS → EVIDENCE_READY → REVIEWED → RELEASE_CANDIDATE → RELEASED
+                  └───────────────────────────────→ HOLD ←──────────────────┘
 ```
 
 | 상태           | 진입 조건                                                           |
 | -------------- | ------------------------------------------------------------------- |
 | PLANNED        | 상세 계획과 종료 기준이 존재                                        |
 | IN_PROGRESS    | 범위와 기준선 commit이 기록됨                                       |
-| EVIDENCE_READY | 필수 테스트·측정·문서와 manifest가 존재                             |
-| REVIEWED       | 두 포트폴리오 스킬의 실제 결과가 존재                               |
-| RELEASED       | Portfolio Review PASS, 🔴 High 0건, Git tag 생성                    |
-| HOLD           | 기능 불변식 실패, 근거 부족, 정합성 🔴 또는 해결되지 않은 핵심 위험 |
+| EVIDENCE_READY | 필수 테스트·측정·문서와 검증된 manifest가 존재                       |
+| REVIEWED | 동결 payload `C0`를 가리키는 두 tracked review attestation이 직계 후속 `C1`에 존재 |
+| RELEASE_CANDIDATE | 두 attestation이 같은 `reviewedSha`에 PASS·High 0이고 clean manifest와 intended tags 준비 |
+| RELEASED | annotated Git tag가 candidate commit을 가리키고 tag 검증이 통과 |
+| HOLD | 기능 불변식 실패, 필수 검증 미실행, 근거 부족, 정합성 🔴 또는 해결되지 않은 핵심 위험 |
 
 `RELEASED`는 실서비스 출시를 뜻하지 않습니다. 해당 2주 프로젝트의 증거와 문서가 공개 가능한 상태라는 뜻입니다.
 
@@ -23,7 +24,7 @@ PLANNED → IN_PROGRESS → EVIDENCE_READY → REVIEWED → RELEASED
 - 필수 범위가 실행 가능하고 확장 범위와 구분되어 있습니다.
 - 자동화 테스트 명령이 재현됩니다.
 - 실패 시나리오가 정상 경로와 함께 검증됩니다.
-- `evidence/MANIFEST.md`에서 결과가 commit과 환경으로 연결됩니다.
+- `projects/<id>/evidence/MANIFEST.md`에서 결과가 `sourceSha`와 환경으로 연결되고 `./gradlew evidenceCheck -PtargetProject=<id>`가 통과합니다.
 - 결과표가 raw log·query·dashboard로 역추적됩니다.
 - 계획 다이어그램이 아니라 현재 구현 다이어그램이 존재합니다.
 - known limitation과 미해결 문제가 공개되어 있습니다.
@@ -115,15 +116,27 @@ Portfolio Review 후 `hiring-sim-portfolio-redteam`을 같은 디렉터리에 �
 
 없는 요소를 꾸며내지 않고 `미검토` 또는 `한계`로 남깁니다.
 
-## RELEASED/HOLD 판정
+Docker가 필요한 필수 범위는 `./gradlew harnessFull`이 통과해야 합니다. 실행할 수 없는 이유는 반드시 기록하지만 면제 조건이 아니며, 그 프로젝트는 실행 가능한 환경에서 재검증할 때까지 `HOLD`입니다.
 
-### RELEASED
+## RELEASE_CANDIDATE/RELEASED/HOLD 판정
+
+### RELEASE_CANDIDATE
 
 - Portfolio Review PASS
 - 🔴 High 0건
 - 🟠 Medium은 수정됐거나 공개 limitation으로 승인됨
 - 필수 면접 질문에 evidence 링크로 답변 가능
-- Git tag와 tag annotation 준비 완료
+- clean manifest의 `sourceSha`와 `intendedTags` 준비 완료
+- `sourceSha..candidate` diff가 증거·결과·리뷰·패키징 문서 allowlist만 포함
+- `C0..C1`은 두 review report만 포함하고 두 report의 `reviewedSha`가 `C0`로 일치
+
+### RELEASED
+
+- `RELEASE_CANDIDATE`의 동일 commit에 annotated tag 생성
+- 각 tag tree에 clean manifest가 있고 `sourceSha`가 tag commit의 조상이며 이름이 `intendedTags`에 포함
+- 중간 diff에 코드·설정·migration·contract·OpenAPI 변경이 있으면 기존 evidence를 폐기하고 새 source에서 재실행
+- tag는 두 report가 같은 payload를 증명하는 attestation commit `C1`을 가리킴
+- tag 검증 실패 또는 tag 이후 내용 변경 시 다시 `RELEASE_CANDIDATE`부터 평가
 
 ### HOLD
 

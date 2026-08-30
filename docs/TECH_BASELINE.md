@@ -56,13 +56,19 @@ public record Money(long amountMinor, Currency currency) {}
 
 ## 변경 API 계약
 
-토스페이먼츠 공개 계약이 지원한다고 명시한 POST API는 공개 `Idempotency-Key` 동작을 따릅니다. sandbox 관리 API와 내부 command는 별도 정책으로 같은 키·같은 본문의 한 비즈니스 결과를 강제합니다.
+토스페이먼츠 공개 계약이 지원한다고 명시한 POST API와 sandbox 내부 command의 정책을 분리합니다.
 
-- 키의 유효 범위는 `호출 주체 + 작업 종류 + 키`입니다.
-- 같은 키와 같은 요청은 처음 확정된 결과를 반환합니다.
-- 같은 키와 다른 요청 본문은 충돌 오류를 반환합니다.
-- 처리 중 상태와 확정 상태를 구분합니다.
-- 멱등 처리를 `exactly-once`로 부르지 않습니다.
+### 공개 호환 API
+
+- 범위는 공식 문서대로 `Idempotency-Key + API key + API path + HTTP method` 조합이며 키 최대 길이는 300자, 유효기간은 최초 요청일부터 15일입니다.
+- 같은 조합의 확정 요청에는 최초 응답을 재전송합니다. 최초 요청 처리 중 재요청은 `409 IDEMPOTENT_REQUEST_PROCESSING`, 길이 초과는 `400 INVALID_IDEMPOTENCY_KEY`로 검증합니다.
+- 같은 키와 다른 본문의 body-hash 충돌은 공개 문서가 보장한 계약으로 주장하지 않습니다.
+
+### sandbox 관리 API와 내부 command
+
+- 범위는 `인증된 호출 주체 + 작업 종류 + 키`이며 요청 본문 해시를 함께 저장합니다.
+- 같은 키·같은 본문은 한 비즈니스 결과를 가리키고, 같은 키·다른 본문은 sandbox 고유 충돌 오류로 거절합니다.
+- 처리 중 상태와 확정 상태를 구분하고 멱등 처리를 `exactly-once`로 부르지 않습니다.
 
 표준 오류 응답은 다음 필드를 가집니다.
 

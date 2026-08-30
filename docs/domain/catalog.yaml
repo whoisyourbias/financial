@@ -21,17 +21,6 @@ documents:
     appliesTo: ["all"]
     sourceRefs: [toss-payments-llms-index, toss-payments-core-api, toss-payments-webhook-guide, toss-payments-virtual-account, toss-legacy-series]
     evidenceRefs: []
-  - id: repository-readme
-    title: "Toss Payments Contract Sandbox Lab"
-    path: README.md
-    kind: domain
-    domains: [repository, payment]
-    status: planned
-    version: "1.0"
-    reviewedAt: 2026-08-28
-    appliesTo: ["all"]
-    sourceRefs: [toss-payments-llms-index, toss-payments-core-api, toss-payments-request-response]
-    evidenceRefs: []
   - id: contracts-readme
     title: "계약 자산 안내"
     path: contracts/README.md
@@ -75,17 +64,6 @@ documents:
     reviewedAt: 2026-08-28
     appliesTo: ["all"]
     sourceRefs: []
-    evidenceRefs: []
-  - id: docs-harness-engineering-plan
-    title: "Harness Engineering Plan"
-    path: docs/HARNESS_ENGINEERING_PLAN.md
-    kind: plan
-    domains: [repository]
-    status: planned
-    version: "1.0"
-    reviewedAt: 2026-08-28
-    appliesTo: ["all"]
-    sourceRefs: [codex-agents, spring-boot-4-1, gradle-9-7-1, postgresql-18-6, testcontainers-2-0-5, github-actions-secure-use]
     evidenceRefs: []
   - id: docs-market-alignment
     title: "시장 정렬 근거"
@@ -475,28 +453,6 @@ documents:
   - id: reviews-final-audit-plan
     title: "최종 감사 계획"
     path: reviews/FINAL_AUDIT_PLAN.md
-    kind: review
-    domains: [repository]
-    status: planned
-    version: "1.0"
-    reviewedAt: 2026-08-28
-    appliesTo: ["all"]
-    sourceRefs: []
-    evidenceRefs: []
-  - id: reviews-plan-portfolio-review
-    title: "이전 계획 포트폴리오 리뷰"
-    path: reviews/PLAN_PORTFOLIO_REVIEW.md
-    kind: review
-    domains: [repository]
-    status: planned
-    version: "1.0"
-    reviewedAt: 2026-08-28
-    appliesTo: ["all"]
-    sourceRefs: []
-    evidenceRefs: []
-  - id: reviews-plan-redteam-review
-    title: "이전 계획 레드팀 리뷰"
-    path: reviews/PLAN_REDTEAM_REVIEW.md
     kind: review
     domains: [repository]
     status: planned

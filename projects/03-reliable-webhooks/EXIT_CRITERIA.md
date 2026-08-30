@@ -2,11 +2,11 @@
 
 ## 계약과 전달
 
-- [ ] `PAYMENT_STATUS_CHANGED`와 `CANCEL_STATUS_CHANGED` payload 계약 테스트가 있다.
+- [ ] `PAYMENT_STATUS_CHANGED`의 공식 transmission 헤더와 `eventType`·`createdAt`·Payment `data` 계약 테스트가 있다.
 - [ ] HTTP 200·10초 이내 성공 판정이 가짜 시계 테스트로 고정된다.
 - [ ] 공개 문서의 7회 재전송 간격과 종료 상태가 자동 검증된다.
 - [ ] 결제 상태 변경과 outbox 기록이 한 트랜잭션이다.
-- [ ] 샘플 상점 inbox가 중복 이벤트 부작용을 한 번으로 제한한다.
+- [ ] 샘플 상점 inbox가 각 transmission attempt를 보존하고 같은 canonical Payment snapshot의 반복 business effect를 한 번으로 제한한다.
 
 ## 장애와 운영
 
@@ -18,9 +18,9 @@
 
 ## 공통 증거 게이트
 
-- [ ] `evidence/manifest.schema.json`을 통과하는 manifest가 있다.
+- [ ] `projects/03-reliable-webhooks/evidence/MANIFEST.md`가 `docs/EVIDENCE_POLICY.md`의 공통 manifest 계약과 `evidenceCheck`를 통과한다.
 - [ ] 실행 명령, Git SHA, 환경, 데이터 seed, 원시 결과가 연결되어 있다.
 - [ ] `./gradlew harnessFast`와 `./gradlew knowledgeCheck`가 통과한다.
-- [ ] Docker가 필요한 범위는 `./gradlew harnessFull` 결과 또는 미실행 사유가 있다.
+- [ ] Docker가 필요한 필수 범위는 `./gradlew harnessFull`이 통과한다. 미실행이면 사유를 기록하고 상태를 `HOLD`로 둔다.
 - [ ] 구현·재현하지 않은 결과를 `[검증됨]`이나 성과로 표현하지 않는다.
 - [ ] 실제 고객 데이터·자격증명·개인정보가 source, fixture, log, manifest에 없다.

@@ -14,14 +14,15 @@
 | TP-PAY-002 | `GET /v1/payments/{paymentKey}` | 승인된 Payment를 고유 `paymentKey`로 조회 | `toss-payments-core-api` | 존재·부재·다른 MID 격리 | PLANNED |
 | TP-PAY-003 | `GET /v1/payments/orders/{orderId}` | 승인된 Payment를 상점 주문번호로 조회 | `toss-payments-core-api` | 존재·부재·MID별 동일 주문번호 | PLANNED |
 | TP-PAY-004 | `POST /v1/payments/{paymentKey}/cancel` | `cancelReason`, 선택 `cancelAmount`, 취소별 `transactionKey`, 전액·부분 취소 | `toss-payments-core-api`, `toss-payments-cancel-guide` | 전액·다회 부분·초과·동시·멱등 취소 | PLANNED |
-| TP-VA-001 | `POST /v1/virtual-accounts` | 가상계좌 발급 뒤 입금 전 상태를 Payment로 표현 | `toss-payments-core-api`, `toss-payments-virtual-account` | 발급·중복 주문·잘못된 은행·만료 | PLANNED |
+| TP-VA-001 | `POST /v1/virtual-accounts` | 필수 `amount`, `orderId`, `orderName`, `customerName`, `bank`로 발급하고 입금 전 상태를 Payment로 표현 | `toss-payments-core-api`, `toss-payments-virtual-account` | 발급·필수값 누락·중복 주문·잘못된 은행·만료 | PLANNED |
+| TP-VA-002 | `POST /v1/payments/{paymentKey}/cancel`의 가상계좌 규칙 | 입금 전에는 `refundReceiveAccount` 없이 전액 취소만 허용하고, 입금 후 취소에는 유효한 `bank`, `accountNumber`, `holderName`을 포함한 `refundReceiveAccount` 필수 | `toss-payments-core-api`, `toss-payments-cancel-guide` | 입금 전 전액·입금 전 부분 거절·입금 후 환불계좌 정상/누락/유효성 실패 | PLANNED |
 
 ## 공통 wire 계약
 
 | ID | 대상 | 규약 | sourceRefs | 계획 검증 | 상태 |
 | --- | --- | --- | --- | --- | --- |
 | TP-WIRE-001 | 인증 | 시크릿 키 기반 Basic 인증, MID·환경별 키 격리 | `toss-payments-api-keys`, `toss-payments-authorization` | 누락·형식 오류·잘못된 키·회전 grace | PLANNED |
-| TP-WIRE-002 | 멱등성 | 문서가 지원한다고 명시한 POST에 `Idempotency-Key` 적용 | `toss-payments-authorization`, `toss-payments-idempotency` | 같은 키/본문, 같은 키/다른 본문, 처리 중 요청 | PLANNED |
+| TP-WIRE-002 | 공개 멱등성 | 모든 POST에서 `Idempotency-Key + API key + API path + HTTP method` 조합을 15일간 적용; 최대 300자, 확정 재요청은 최초 응답, 처리 중 재요청은 `409 IDEMPOTENT_REQUEST_PROCESSING` | `toss-payments-authorization`, `toss-payments-idempotency` | 같은 tuple 재전송·API key/path/method 분리·길이 초과 400·처리 중 409; body-hash 충돌은 sandbox 정책으로 분리 | PLANNED |
 | TP-WIRE-003 | 응답 | JSON 리소스 또는 `code`·`message` Error와 HTTP 상태 | `toss-payments-request-response`, `toss-payments-error-codes` | endpoint별 대표 4xx·5xx fixture | PLANNED |
 | TP-WIRE-004 | 버전 | additive 변경과 파괴적 변경을 구분하고 구버전 소비자를 보호 | `toss-payments-versioning` | old/new contract 조합 | PLANNED |
 | TP-WIRE-005 | Payment | 공통 필드와 method별 `card`, `easyPay`, `virtualAccount`, `cancels`, `failure` | `toss-payments-core-api`, `toss-payments-data-types`, `toss-payments-enum-codes` | schema snapshot과 JSON fixture | PLANNED |
@@ -32,10 +33,21 @@
 | ID | 대상 | 규약 | sourceRefs | 계획 검증 | 상태 |
 | --- | --- | --- | --- | --- | --- |
 | TP-STATE-001 | Payment 상태 | `READY`, `IN_PROGRESS`, `WAITING_FOR_DEPOSIT`, `DONE`, `CANCELED`, `PARTIAL_CANCELED`, `ABORTED`, `EXPIRED` | `toss-payments-core-api`, `toss-payments-enum-codes` | 결제수단별 허용·불허 전이 | PLANNED |
-| TP-WEBHOOK-001 | `PAYMENT_STATUS_CHANGED` | Payment 상태 변경 payload를 MID별 endpoint로 전달 | `toss-payments-webhook-guide`, `toss-payments-webhook-events` | 정상·중복·늦은 전달 | PLANNED |
-| TP-WEBHOOK-002 | `CANCEL_STATUS_CHANGED` | 취소 상태 변경을 Cancel payload로 전달 | `toss-payments-webhook-guide`, `toss-payments-webhook-events` | 다회 부분 취소·중복 전달 | PLANNED |
-| TP-WEBHOOK-003 | `DEPOSIT_CALLBACK` | 가상계좌 입금·입금 취소 결과 전달 | `toss-payments-webhook-guide`, `toss-payments-virtual-account-webhook` | 입금·입금 취소·역순 | PLANNED |
+| TP-WEBHOOK-001 | `PAYMENT_STATUS_CHANGED` | body의 `eventType`, `createdAt`, Payment `data`와 `tosspayments-webhook-transmission-time`, `tosspayments-webhook-transmission-retried-count`, `tosspayments-webhook-transmission-id` 헤더를 MID별 endpoint로 전달 | `toss-payments-webhook-guide`, `toss-payments-webhook-events` | 정상·반복 전달·늦은 전달·헤더 누락; retry 사이 transmission ID 안정성은 주장하지 않음 | PLANNED |
+| TP-WEBHOOK-002 | `DEPOSIT_CALLBACK` | body의 `createdAt`, `secret`, `status`, `transactionKey`, `orderId`와 공통 transmission 헤더를 전달하고 승인 Payment의 `secret`과 일치 검증 | `toss-payments-webhook-guide`, `toss-payments-virtual-account-webhook` | 입금·입금 취소·secret 불일치·역순 | PLANNED |
+| TP-WEBHOOK-003 | 가상계좌 이중 전달 | `PAYMENT_STATUS_CHANGED`와 `DEPOSIT_CALLBACK`을 모두 등록하면 같은 가상계좌 상태 변경에 웹훅이 두 번 전송됨 | `toss-payments-webhook-events` | 두 event type이 각각 전달되는 fixture와 event별 body 검증 | PLANNED |
 | TP-WEBHOOK-004 | 전달 정책 | 10초 안에 200이면 성공, 실패 시 문서의 간격으로 최대 7회 재전송 | `toss-payments-webhook-guide` | fake clock 기반 1·4·16·64·256·1024·4096분 | PLANNED |
+
+`CANCEL_STATUS_CHANGED`는 일반 국내 결제에 발송되지 않고 해외 간편결제 취소 또는 취소 실패에 사용되는 이벤트이므로 선정 범위에서 제외합니다. 국내 취소 상태는 취소 API 응답·Payment 조회와 `PAYMENT_STATUS_CHANGED`의 Payment 상태로 검증합니다.
+
+## 프로젝트 내부 안전 계약
+
+아래 행은 공식 토스페이먼츠 계약이 아니라 샌드박스와 샘플 상점이 공개 이벤트를 안전하게 처리하기 위한 내부 결정입니다.
+
+| ID | 대상 | 내부 규약 | 계획 검증 | 상태 |
+| --- | --- | --- | --- | --- |
+| INT-WEBHOOK-001 | Payment 반복 전달 | `eventType`, `Payment.paymentKey`, status와 선정 Payment 필드의 canonical hash가 같은 snapshot은 상점 business effect를 다시 만들지 않음 | 서로 다른 transmission ID·time으로 같은 snapshot 반복, 변경 snapshot 구분 | PLANNED |
+| INT-WEBHOOK-002 | 가상계좌 교차 이벤트 | guarded Payment 상태 전이와 입금 `transactionKey`로 두 event type의 도메인 입금·분개·알림 효과를 한 번만 적용하고 외부 전달 이력은 각각 보존 | 두 event type의 양방향 순서·반복 전달 | PLANNED |
 
 ## 샌드박스 전용 제어 계약
 

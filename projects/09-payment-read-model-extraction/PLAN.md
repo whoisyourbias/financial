@@ -4,17 +4,23 @@
 
 결제 명령 모델을 권위 원장으로 유지하면서 상점 조회용 read model을 분리하고, 단일 프로세스 projection과 별도 프로세스 추출을 같은 워크로드로 비교합니다.
 
-## 범위
+## 필수 범위
 
-- 버전이 있는 결제·취소·입금·정산 projection event
+- 버전이 있는 결제 승인·취소 projection event 고정 세트
 - PostgreSQL 기반 상점 결제 조회 모델
+- paymentKey·orderId 조회 두 use case와 필요한 필드
 - 멱등 upsert, 순서 역전, 누락 탐지, 재구축
 - 동일 프로세스와 별도 프로세스 두 배치
 - lag·정합성·운영 복잡도 비교
-- 장애 시 command-side 조회로 제한적 fallback
 - 서비스 추출 여부를 측정 후 결정
 
-검색 엔진이나 분석 DB는 요구사항과 측정 근거가 생길 때만 추가합니다.
+## 확장 범위
+
+- 입금·정산 projection event
+- 장애 시 command-side 조회 fallback
+- 검색 엔진·분석 DB와 추가 조회 use case
+
+두 조회 use case, 승인·취소 event set, 중복·역순·재구축과 두 배치 비교가 끝나기 전에는 확장을 시작하지 않습니다. 검색 엔진이나 분석 DB는 별도 요구사항과 측정 근거가 생길 때만 추가합니다.
 
 ## 불변식
 
@@ -50,7 +56,7 @@
 - checkpoint 기반 rebuild 체크섬
 - 두 배치의 동일 워크로드 보고서
 - 추출 또는 유지 결정 ADR
-- `evidence/projects/09/` manifest
+- `projects/09-payment-read-model-extraction/evidence/` manifest
 
 ## 근거
 

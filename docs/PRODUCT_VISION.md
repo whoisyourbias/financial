@@ -26,7 +26,7 @@
 4. `POST /v1/virtual-accounts` 발급과 입금 전후 상태
 5. Payment 상태와 method별 응답 객체
 6. Basic 인증, 문서가 지원하는 `Idempotency-Key`, JSON Error 객체와 API 버전
-7. `PAYMENT_STATUS_CHANGED`, `CANCEL_STATUS_CHANGED`, `DEPOSIT_CALLBACK`
+7. `PAYMENT_STATUS_CHANGED`, `DEPOSIT_CALLBACK`
 8. webhook의 10초 ack와 최대 7회 재전송 정책
 
 전체 행과 출처는 [계약 매트릭스](TOSS_PAYMENTS_CONTRACT_MATRIX.md), 공식 문서와 레거시 개선 사례의 용도는 [근거 지도](TOSS_PAYMENTS_EVIDENCE_MAP.md)에서 관리합니다.
@@ -67,7 +67,7 @@
 | 02 | 승인·조회·전액/부분 취소와 멱등·동시성 |
 | 03 | MID별 webhook 전달, 재시도와 중복 안전 수신 |
 | 04 | 가상계좌 발급·입금·입금 취소와 비동기 대사 |
-| 05 | MID·API key·버전·오류·권한·감사 경계 |
+| 05 | MID·API key·오류·권한·감사 경계 |
 | 06 | 전체 결제 흐름의 관측·장애 실험·샘플 상점 배포 |
 | 07 | 외부 계약을 유지한 adapter·shadow·dual-run·rollback |
 | 08 | 거래 단위 수수료 정책 snapshot과 정산 재처리 |
@@ -89,7 +89,7 @@
 
 - 토스페이먼츠의 비공개 schema, 계정과목, transaction boundary, 네트워크와 조직
 - 실제 카드번호·은행 계좌·카드사 전문·가맹점 수수료와 세금
-- 빌링·브랜드페이·링크페이·지급대행·해외결제
+- 빌링·브랜드페이·링크페이·지급대행·해외결제와 해외 간편결제 취소·실패용 `CANCEL_STATUS_CHANGED`
 - 브랜드, 문구, 결제창 UI와 상점관리자 자산
 - 기술 아티클의 규모·성능을 이 프로젝트의 성과로 인용하는 것
 
