@@ -70,7 +70,11 @@ fun Project.gitTrackedInputsDigest(): String {
             val path = rootDir.toPath().resolve(relativePath).normalize()
             digest.update(relativePath.toByteArray(StandardCharsets.UTF_8))
             digest.update(0)
-            digest.update(Files.readAllBytes(path))
+            if (Files.isRegularFile(path)) {
+                digest.update(Files.readAllBytes(path))
+            } else {
+                digest.update("<MISSING_TRACKED_FILE>".toByteArray(StandardCharsets.UTF_8))
+            }
             digest.update(0)
         }
     return digest.digest().joinToString("") { "%02x".format(it) }
@@ -176,6 +180,12 @@ val knowledgeCheck =
         group = "verification"
         dependsOn(":tools:knowledge-harness:knowledgeCheck")
     }
+
+tasks.register("evidenceCheck") {
+    description = "Validates a project evidence manifest, artifacts, and Git evidence boundary."
+    group = "verification"
+    dependsOn(":tools:knowledge-harness:evidenceCheck")
+}
 
 tasks.register("knowledgeExport") {
     description = "Writes deterministic RAG input JSONL under build/knowledge."
@@ -579,10 +589,11 @@ fun registerManifestTask(command: String): TaskProvider<Task> {
             val catalog = rootProject.file("docs/domain/catalog.yaml")
             val runtime = Runtime.getRuntime()
             val operatingSystem = ManagementFactory.getOperatingSystemMXBean()
+            val selectedToolchain = java21Launcher.get().metadata
 
             val manifest =
                 linkedMapOf(
-                    "schemaVersion" to 1,
+                    "schemaVersion" to 2,
                     "runId" to runId,
                     "command" to command,
                     "status" to status,
@@ -603,8 +614,17 @@ fun registerManifestTask(command: String): TaskProvider<Task> {
                             "jvmMaxMemoryBytes" to runtime.maxMemory(),
                             "locale" to "en-US",
                             "timezone" to "UTC",
-                            "javaVendor" to System.getProperty("java.vendor"),
-                            "javaVersion" to System.getProperty("java.version"),
+                            "gradleLauncherJvm" to
+                                linkedMapOf(
+                                    "vendor" to System.getProperty("java.vendor"),
+                                    "version" to System.getProperty("java.version"),
+                                ),
+                            "javaToolchain" to
+                                linkedMapOf(
+                                    "vendor" to selectedToolchain.vendor,
+                                    "languageVersion" to selectedToolchain.languageVersion.toString(),
+                                    "jvmVersion" to selectedToolchain.jvmVersion,
+                                ),
                             "gradleVersion" to gradle.gradleVersion,
                             "operatingSystem" to operatingSystem.name,
                         ),
@@ -834,14 +854,15 @@ tasks.register("promoteHarnessEvidence") {
             }
         }
 
-        val projectManifest = projectDirectory.resolve("evidence/MANIFEST.md")
-        projectManifest.parentFile.mkdirs()
+        val harnessEvidence = projectDirectory.resolve("evidence/HARNESS_EVIDENCE.md")
+        harnessEvidence.parentFile.mkdirs()
         val heading = "## Harness $head"
         val existing =
-            if (projectManifest.exists()) {
-                projectManifest.readText(StandardCharsets.UTF_8)
+            if (harnessEvidence.exists()) {
+                harnessEvidence.readText(StandardCharsets.UTF_8)
             } else {
-                "# 프로젝트 증거 Manifest\n\n"
+                "# 공통 Harness 보조 증거\n\n" +
+                    "이 파일은 프로젝트 기능 완료를 증명하는 `MANIFEST.md`가 아닙니다.\n\n"
             }
         if (!existing.contains(heading)) {
             val rows =
@@ -863,8 +884,8 @@ tasks.register("promoteHarnessEvidence") {
                 |$rows
                 |
                 """.trimMargin()
-            projectManifest.writeText(existing.trimEnd() + "\n\n" + section, StandardCharsets.UTF_8)
+            harnessEvidence.writeText(existing.trimEnd() + "\n\n" + section, StandardCharsets.UTF_8)
         }
-        logger.lifecycle("Promoted harness evidence for {} into projects/{}/evidence", head, targetProject)
+        logger.lifecycle("Promoted harness support evidence for {} into projects/{}/evidence", head, targetProject)
     }
 }

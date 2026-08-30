@@ -2,7 +2,7 @@
 
 ## 목표
 
-결제 명령 모델을 권위 원장으로 유지하면서 상점 조회용 read model을 분리하고, 단일 프로세스 projection과 별도 프로세스 추출을 같은 워크로드로 비교합니다.
+결제 상태의 권위 원본인 Payment command model과 회계 사실의 권위 원본인 ledger journal을 유지하면서 상점 조회용 read model을 분리하고, 단일 프로세스 projection과 별도 프로세스 추출을 같은 워크로드로 비교합니다.
 
 ## 필수 범위
 
@@ -24,7 +24,7 @@
 
 ## 불변식
 
-1. 결제 명령과 원장이 source of truth입니다.
+1. Payment command model은 결제 상태 전이의 권위 원본이고 ledger journal은 회계 사실의 권위 원본입니다. read model은 어느 쪽도 대체하지 않습니다.
 2. read model 장애가 승인·취소 커밋을 막지 않습니다.
 3. 같은 event ID·version의 재처리는 결과를 바꾸지 않습니다.
 4. 오래된 version이 최신 projection을 덮어쓰지 않습니다.

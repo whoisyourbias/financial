@@ -44,8 +44,9 @@
 
 - contract suite 실패, `BLOCKING` 또는 `UNKNOWN` diff 1건 이상, shadow 부작용 1건 이상이면 no-go입니다.
 - backfill 대상 수·operation 수·금액 체크섬은 100% 일치해야 합니다.
-- canary 오류율이 같은 fixture 기준선보다 0.5%p 넘게 증가하거나 p95가 20% 넘게 증가하면 즉시 기준 엔진으로 수동 롤백합니다.
-- 임계치는 baseline 실행 전에 고정하고, 실행 뒤 유리하게 바꾸지 않습니다. 모든 분자·분모와 raw diff를 보존합니다.
+- 성능·오류율 임계치 산정 방법, workload, 표본 단위, 반복 종료 조건과 샘플 상점 SLO에서 도출한 최대 허용 회귀 예산을 baseline 측정 전에 등록합니다.
+- 같은 fixture 기준 엔진을 반복 실행해 run-to-run 변동의 단측 95% 신뢰 상한을 구합니다. 그 상한이 최대 허용 회귀 예산보다 작지 않거나 표본이 신뢰구간을 계산하기에 부족하면 candidate 차이를 판별할 수 없으므로 canary는 no-go입니다.
+- 최대 허용 회귀 예산을 rollback 임계치로 고정하고 candidate 회귀의 단측 95% 신뢰 상한이 이를 넘으면 즉시 기준 엔진으로 수동 롤백합니다. candidate 측정 뒤 임계치를 바꾸지 않으며 오류율 분자·분모, latency 원본, baseline 반복값과 계산식을 보존합니다.
 
 ## 단계
 
@@ -53,8 +54,9 @@
 2. 공통 port와 기준 엔진 adapter를 분리합니다.
 3. immutable `PaymentOperation` 취소 엔진과 데이터 변환기를 구현합니다.
 4. 합성 트래픽을 shadow로 실행해 semantic diff를 수집합니다.
-5. 차단 차이 0과 데이터 검증 통과 후 MID 일부를 전환합니다.
-6. 오류율·지연·금액 불일치 임계치에서 사전 준비한 기준 엔진으로 수동 롤백합니다.
+5. 사전 등록한 calibration protocol로 baseline 변동과 rollback 임계치를 고정합니다.
+6. 차단 차이 0과 데이터 검증 통과 후 MID 일부를 전환합니다.
+7. 오류율·지연·금액 불일치 임계치에서 사전 준비한 기준 엔진으로 수동 롤백합니다.
 
 ## 차이 분류
 
@@ -70,6 +72,7 @@
 - semantic diff 원시 데이터와 분류 규칙
 - backfill 재실행·체크섬 보고서
 - canary·롤백 타임라인
+- baseline 반복 원본, 임계치 계산식과 사전 등록한 calibration protocol
 - `projects/07-api-compat-migration/evidence/` manifest
 
 ## 근거

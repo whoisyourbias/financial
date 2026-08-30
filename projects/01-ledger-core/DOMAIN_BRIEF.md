@@ -41,8 +41,8 @@
 
 - 합성 `paymentKey`를 journal의 외부 참조에 연결합니다.
 - 원장의 source of truth는 확정된 journal과 두 개 이상의 posting입니다.
-- 같은 외부 참조와 같은 command는 같은 결과를 가리킵니다.
-- 같은 외부 참조와 다른 command는 충돌입니다.
+- 같은 `paymentKey`로 승인을 다시 제출해도 새 Payment·journal을 만들지 않습니다. 이 aggregate 중복 방어는 공개 `Idempotency-Key` 응답 재생 계약이 아닙니다.
+- 같은 `paymentKey`를 다른 orderId·amount에 재사용하면 충돌입니다.
 - 확정 journal과 posting은 수정·삭제하지 않습니다.
 - 취소와 정정은 새 journal의 반대 posting으로 표현합니다.
 - 프로젝트 01은 승인에 필요한 최소 Payment 상태만 저장합니다. 취소와 전체 상태 전이는 프로젝트 02에서, 내부 엔진의 호환 이전은 프로젝트 07에서 다룹니다.
@@ -100,7 +100,7 @@
 | posting 금액은 0보다 크다 | 0·음수 거절 |
 | 한 journal에서 서로 다른 통화를 상계하지 않는다 | KRW debit과 USD credit 거절 |
 | 저장은 journal과 모든 posting에 원자적이다 | 두 번째 posting 실패 뒤 row가 남지 않음 |
-| 같은 외부 참조는 중복 금액을 만들지 않는다 | 같은 command 재시도와 다른 command 충돌 |
+| 같은 paymentKey는 중복 금액을 만들지 않는다 | 같은 승인 재제출과 다른 orderId·amount 재사용 충돌; 공개 멱등 응답 재생은 제외 |
 | 확정 기록은 수정·삭제하지 않는다 | repository와 DB 최종 방어 우회 시도 |
 | 정정 뒤에도 시점별 잔액을 재계산할 수 있다 | 원본 직후와 reversal 직후 잔액 비교 |
 
@@ -108,7 +108,7 @@
 
 | 상황 | 기대 결과 | 다음 프로젝트 연결 |
 | --- | --- | --- |
-| 같은 합성 `paymentKey`와 같은 본문 재전송 | 최초 확정 결과 반환 | 02 멱등 요청 경쟁 |
+| 같은 합성 `paymentKey`와 같은 승인 재제출 | 새 Payment·journal 없이 기존 확정 상태로 수렴; 공개 응답 재생 계약은 아님 | 02 공개 멱등 요청 경쟁 |
 | 같은 합성 `paymentKey`와 다른 금액 | 충돌, 새 journal 없음 | 02 결제 command |
 | posting 저장 중 DB 오류 | 전체 rollback | 03 outbox transaction |
 | 확정 journal update·delete | 거절과 감사 가능한 오류 | 05 권한·감사 |

@@ -1,4 +1,6 @@
-# 프로젝트 증거 Manifest
+# 공통 Harness 보조 증거
+
+이 기록은 공통 하네스의 실행 가능성만 보조하며 프로젝트 01 기능 완료나 `EVIDENCE_READY`를 증명하는 `MANIFEST.md`가 아닙니다.
 
 ## Harness 893808ccfa65a739497540664e9450bf2b4d1d58
 
