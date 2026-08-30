@@ -33,3 +33,19 @@ tasks.register<JavaExec>("knowledgeExport") {
     mainClass.set(application.mainClass)
     args("export", rootProject.projectDir.absolutePath)
 }
+
+tasks.register<JavaExec>("evidenceCheck") {
+    description = "Validates one evidence manifest against the repository evidence policy."
+    group = "verification"
+    timeout.set(Duration.ofMinutes(2))
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set(application.mainClass)
+    doFirst {
+        val targetProject =
+            providers.gradleProperty("targetProject").orNull
+                ?: throw GradleException(
+                    "Provide -PtargetProject=<id>, for example 01-ledger-core or final-audit",
+                )
+        args("evidence-check", rootProject.projectDir.absolutePath, targetProject)
+    }
+}

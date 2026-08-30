@@ -21,7 +21,7 @@
 
 | ID | 대상 | 규약 | sourceRefs | 계획 검증 | 상태 |
 | --- | --- | --- | --- | --- | --- |
-| TP-WIRE-001 | 인증 | 시크릿 키 기반 Basic 인증, MID·환경별 키 격리 | `toss-payments-api-keys`, `toss-payments-authorization` | 누락·형식 오류·잘못된 키·회전 grace | PLANNED |
+| TP-WIRE-001 | 공개 인증 wire | 시크릿 키를 username, 빈 문자열을 password로 둔 `Basic base64(secret:)` Authorization 헤더 | `toss-payments-api-keys`, `toss-payments-authorization` | 정상·누락·scheme/Base64 오류·콜론 누락·잘못된 시크릿 | PLANNED |
 | TP-WIRE-002 | 공개 멱등성 | 모든 POST에서 `Idempotency-Key + API key + API path + HTTP method` 조합을 15일간 적용; 최대 300자, 확정 재요청은 최초 응답, 처리 중 재요청은 `409 IDEMPOTENT_REQUEST_PROCESSING` | `toss-payments-authorization`, `toss-payments-idempotency` | 같은 tuple 재전송·API key/path/method 분리·길이 초과 400·처리 중 409; body-hash 충돌은 sandbox 정책으로 분리 | PLANNED |
 | TP-WIRE-003 | 응답 | JSON 리소스 또는 `code`·`message` Error와 HTTP 상태 | `toss-payments-request-response`, `toss-payments-error-codes` | endpoint별 대표 4xx·5xx fixture | PLANNED |
 | TP-WIRE-004 | 버전 | additive 변경과 파괴적 변경을 구분하고 구버전 소비자를 보호 | `toss-payments-versioning` | old/new contract 조합 | PLANNED |
@@ -46,6 +46,7 @@
 
 | ID | 대상 | 내부 규약 | 계획 검증 | 상태 |
 | --- | --- | --- | --- | --- |
+| INT-AUTH-001 | credential 수명주기·격리 | 시크릿 원문을 저장하지 않고 hash를 MID·test/live-simulated 환경에 묶으며, 회전 grace·즉시 폐기·캐시 무효화와 사람 역할을 공개 Basic wire 계약과 별도로 관리 | MID/환경 교차 사용·회전 전후·폐기 뒤 캐시·역할 오용 | PLANNED |
 | INT-WEBHOOK-001 | Payment 반복 전달 | `eventType`, `Payment.paymentKey`, status와 선정 Payment 필드의 canonical hash가 같은 snapshot은 상점 business effect를 다시 만들지 않음 | 서로 다른 transmission ID·time으로 같은 snapshot 반복, 변경 snapshot 구분 | PLANNED |
 | INT-WEBHOOK-002 | 가상계좌 교차 이벤트 | guarded Payment 상태 전이와 입금 `transactionKey`로 두 event type의 도메인 입금·분개·알림 효과를 한 번만 적용하고 외부 전달 이력은 각각 보존 | 두 event type의 양방향 순서·반복 전달 | PLANNED |
 

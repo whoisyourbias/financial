@@ -22,6 +22,7 @@
 ```text
 projects/<id>/evidence/
 ├── MANIFEST.md
+├── HARNESS_EVIDENCE.md
 ├── environment.md
 ├── commands.md
 ├── raw/
@@ -32,7 +33,7 @@ projects/<id>/evidence/
 └── results.md
 ```
 
-`MANIFEST.md`는 이 문서가 정의하는 공통 manifest 계약입니다. 별도의 존재하지 않는 schema 파일을 참조하지 않습니다. 구현 시작 전에 공통 harness가 이 필드를 검사하는 `evidenceCheck`를 제공하며, 해당 명령이 없거나 실패하면 프로젝트는 `EVIDENCE_READY`로 이동할 수 없습니다.
+`MANIFEST.md`는 구현·실험 결과가 생긴 뒤에만 만드는 프로젝트 증거의 권위 manifest이며, 이 문서가 공통 schema를 정의합니다. `HARNESS_EVIDENCE.md`는 선택적인 공통 하네스 실행 기록일 뿐 프로젝트 기능 완료나 `EVIDENCE_READY`를 증명하지 않습니다. 공통 harness의 `evidenceCheck`가 `MANIFEST.md`를 검사하며, 해당 명령이 실패하면 프로젝트는 `EVIDENCE_READY`로 이동할 수 없습니다.
 
 파일은 다음 YAML front matter로 시작합니다. `schemaVersion`은 정수, `projectId`는 실제 디렉터리 ID, `sourceSha`는 40자리 commit SHA, `generatedAt`은 UTC ISO-8601, `intendedTags`는 하나 이상의 고유 문자열 목록입니다.
 
@@ -104,9 +105,9 @@ front matter의 key와 type은 위 예시로 고정합니다. `schemaVersion`, `
 - raw 파일과 요약 표의 연결
 - known limitation과 재현 실패 조건
 
-계획 단계에는 빈 manifest나 결과 파일을 만들지 않습니다. 구현 증거가 생기면 프로젝트의 `projects/<id>/evidence/MANIFEST.md`를 생성하고 `./gradlew evidenceCheck -PtargetProject=<id>`로 검증합니다. tag 생성 전 manifest의 `intendedTags`는 필수지만 실제 tag는 아직 없어야 합니다.
+계획 단계에는 빈 `MANIFEST.md`나 결과 파일을 만들지 않습니다. 공통 하네스 검증 기록만 먼저 보존해야 한다면 `promoteHarnessEvidence`로 `HARNESS_EVIDENCE.md`와 `raw/harness/**`를 만들고 프로젝트 증거와 구분합니다. 구현 증거가 생기면 프로젝트의 `projects/<id>/evidence/MANIFEST.md`를 생성·commit하고 깨끗한 candidate worktree에서 `./gradlew evidenceCheck -PtargetProject=<id>`로 검증합니다. tag 생성 전 manifest의 `intendedTags`는 필수지만 실제 tag는 아직 없어야 합니다.
 
-`evidenceCheck`는 `sourceSha..release-candidate`의 변경 경로도 검사합니다. 허용 경로는 `projects/**/evidence/**`, 프로젝트의 `RESULTS.md`·`PORTFOLIO_REVIEW.md`·`REDTEAM_REVIEW.md`, 루트 `README.md`, `reviews/**`뿐입니다. 코드·빌드·설정·migration·`contracts/**`·계약 매트릭스·OpenAPI를 포함해 allowlist 밖의 파일이 하나라도 바뀌면 기존 evidence를 무효화하고 변경 commit을 새 `sourceSha`로 전체 필수 검증을 다시 실행합니다.
+`evidenceCheck`는 YAML key·type, 필수 H2, repository-relative path, 파일 존재와 SHA-256, summary heading, `sourceSha`의 Git 조상 관계, `sourceSha..release-candidate`의 변경 경로를 검사합니다. 허용 경로는 `projects/**/evidence/**`, 대상 프로젝트의 `RESULTS.md`·`PORTFOLIO_REVIEW.md`·`REDTEAM_REVIEW.md`, 루트 `README.md`, `reviews/**`뿐입니다. 코드·빌드·설정·migration·`contracts/**`·계약 매트릭스·OpenAPI를 포함해 allowlist 밖의 파일이 하나라도 바뀌면 기존 evidence를 무효화하고 변경 commit을 새 `sourceSha`로 전체 필수 검증을 다시 실행합니다.
 
 Portfolio Review와 Red Team을 통과한 evidence commit에 각 annotated tag를 만든 뒤, tag tree에 clean manifest가 있고 manifest의 `sourceSha`가 tag commit의 도달 가능한 조상이며 중간 diff가 allowlist만 포함하고 artifact가 그 source를 증명하는지 확인해야 `RELEASED`가 됩니다. 프로젝트 06처럼 프로젝트 tag와 showcase tag가 같은 candidate를 가리키면 두 이름을 `intendedTags`에 모두 기록합니다.
 

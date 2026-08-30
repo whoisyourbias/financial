@@ -72,7 +72,8 @@ Java를 실행할 수 있는 환경에서는 Windows에서 `gradlew.bat`, 다른
 | `localUp` | A | Compose PostgreSQL 시작과 health 대기 | 예 |
 | `localDown` | A | Compose service 중지, volume 보존 | 예 |
 | `localReset` | A | Compose service와 개발 volume 삭제 | 예, 명시적 실행만 |
-| `promoteHarnessEvidence` | A | 성공한 실행 결과를 프로젝트 evidence로 승격 | 실행 결과에 따름 |
+| `promoteHarnessEvidence` | A | 성공한 Full 결과를 프로젝트 harness 보조 증거로 승격 | 실행 결과에 따름 |
+| `evidenceCheck` | A | 프로젝트 manifest schema·artifact·Git evidence 경계 검증 | 아니요 |
 | `knowledgeCheck` | B | metadata, 내부 링크, 출처, evidence, 중복 ID 검증 | 아니요 |
 | `knowledgeExport` | B | 검색·RAG 입력용 JSONL 생성 | 아니요 |
 
@@ -195,12 +196,14 @@ tools/
 
 모든 Fast와 Full 실행은 `build/reports/harness/<run-id>/manifest.json`을 생성합니다. 실패한 실행도 가능한 범위의 진단과 완료된 task 결과를 남기되 `status: FAILED`로 표시합니다.
 
+새 실행 manifest는 `schemaVersion: 2`이며 Gradle launcher JVM과 compile/test Java toolchain을 별도 object로 기록합니다. 보존된 `schemaVersion: 1` raw manifest의 단일 `javaVendor`·`javaVersion` 필드는 당시 기록 형식으로 유지하되 새 결과와 같은 필드로 비교하지 않습니다.
+
 manifest에는 다음 필드를 포함합니다.
 
 - schema version, run ID, command, PASS/FAILED, 시작·종료 UTC
 - Git commit SHA, branch, dirty 여부
 - OS, architecture, CPU count, memory, locale, timezone
-- Java vendor·version, Gradle version
+- Gradle launcher JVM vendor·version과 compile/test Java toolchain vendor·language/JVM version, Gradle version
 - Docker client·server version과 container image tag·resolved digest
 - task별 outcome과 test count·실패 수·report 경로
 - migration 시작·종료 version과 Fresh/Upgrade 결과
@@ -222,13 +225,13 @@ manifest에는 다음 필드를 포함합니다.
 4. secret pattern 검사에서 노출이 없습니다.
 5. `-PtargetProject=<id>`가 실제 `projects/<id>`와 일치합니다.
 
-명령은 raw JSON manifest와 필요한 report를 `projects/<id>/evidence/raw/harness/<source-sha>/`에 복사하고 `projects/<id>/evidence/MANIFEST.md`에 명령·환경·checksum·한계를 연결합니다. 같은 source SHA와 checksum의 재실행은 변경이 없는 idempotent 작업이어야 하며, 같은 SHA에 다른 결과가 있으면 덮어쓰지 않고 실패합니다.
+명령은 raw JSON manifest와 필요한 report를 `projects/<id>/evidence/raw/harness/<source-sha>/`에 복사하고 `projects/<id>/evidence/HARNESS_EVIDENCE.md`에 명령·checksum·한계를 연결합니다. 이 보조 기록은 프로젝트 기능 결과용 `MANIFEST.md`를 생성하거나 대체하지 않습니다. 같은 source SHA와 checksum의 재실행은 변경이 없는 idempotent 작업이어야 하며, 같은 SHA에 다른 결과가 있으면 덮어쓰지 않고 실패합니다.
 
-승격 후 생긴 추적 파일은 별도 evidence commit으로 검토합니다. `MANIFEST.md`에는 검증 대상인 source SHA를 기록하고, evidence commit 자체는 Git 이력과 tag·PR에서 식별합니다. commit이 자기 SHA를 본문에 기록하는 자기참조 계약은 두지 않습니다.
+승격 후 생긴 추적 파일은 별도 evidence commit으로 검토합니다. `HARNESS_EVIDENCE.md`에는 검증 대상인 source SHA를 기록하고, evidence commit 자체는 Git 이력과 tag·PR에서 식별합니다. commit이 자기 SHA를 본문에 기록하는 자기참조 계약은 두지 않습니다.
 
-### 프로젝트 evidence validator 확장 `[가정]`
+### 프로젝트 evidence validator
 
-프로젝트 01이 `EVIDENCE_READY`로 이동하기 전에 공통 harness가 `./gradlew evidenceCheck -PtargetProject=<id>`를 제공합니다. 이 작업은 `docs/EVIDENCE_POLICY.md`가 정의한 YAML front matter·필수 H2, raw 경로·checksum, `sourceSha`, `intendedTags`, 실제 파일 존재와 `sourceSha..candidate` 변경 allowlist를 검사합니다. `final-audit`이면 `reviews/evidence/MANIFEST.md`와 12개 하위 manifest checksum을 검사합니다. allowlist 밖의 코드·설정·migration·contract·OpenAPI 변경은 기존 evidence를 무효화합니다. schema와 validator의 소유자는 루트 harness이며 각 프로젝트가 서로 다른 manifest 형식을 만들지 않습니다. validator가 구현·통과하지 않으면 해당 프로젝트는 `HOLD`입니다.
+공통 harness는 `./gradlew evidenceCheck -PtargetProject=<id>`를 제공합니다. 이 작업은 `docs/EVIDENCE_POLICY.md`가 정의한 YAML front matter key·type, 필수 H2, raw 경로·checksum과 summary anchor, `sourceSha`, `intendedTags`, 깨끗한 candidate와 `sourceSha..candidate` 변경 allowlist를 검사합니다. `final-audit`이면 `reviews/evidence/MANIFEST.md`와 12개 하위 manifest checksum을 검사합니다. allowlist 밖의 코드·설정·migration·contract·OpenAPI 변경은 기존 evidence를 무효화합니다. schema와 validator의 소유자는 루트 harness이며 각 프로젝트가 서로 다른 manifest 형식을 만들지 않습니다. validator가 통과하지 않으면 해당 프로젝트는 `HOLD`입니다.
 
 ## 6. 단계 B — 도메인 지식과 검색·RAG 준비
 
@@ -323,7 +326,7 @@ Vector database와 embedding은 프로젝트 11에서 retrieval 요구와 평가
 
 ### 단계 A 완료
 
-- `harnessDoctor`, `harnessFast`, `harnessFull`, `localUp`, `localDown`, `promoteHarnessEvidence`가 문서와 실제 task에서 일치합니다.
+- `harnessDoctor`, `harnessFast`, `harnessFull`, `localUp`, `localDown`, `promoteHarnessEvidence`, `evidenceCheck`가 문서와 실제 task에서 일치합니다.
 - wrapper checksum, dependency lock, dependency verification, repository allowlist가 실제로 적용됩니다.
 - Linux·Windows Fast와 Linux Full이 최소 CI에서 성공합니다.
 - Docker가 꺼진 환경에서 Fast는 성공하고 Full은 이해 가능한 preflight 오류로 실패합니다.
@@ -334,6 +337,7 @@ Vector database와 embedding은 프로젝트 11에서 retrieval 요구와 평가
 - 같은 검증을 두 번 실행해도 `build/` 밖의 추적 파일이 변하지 않습니다.
 - manifest의 SHA, 환경, task 결과, artifact checksum이 실제 결과와 일치합니다.
 - evidence 승격이 SHA 불일치·실패 실행·checksum 충돌·secret 노출을 거절합니다.
+- `evidenceCheck`가 잘못된 schema·artifact checksum·Git 조상·변경 allowlist를 거절합니다.
 - 프로젝트 01의 종료 기준 중 구현하지 않은 항목은 체크하거나 성과로 표현하지 않습니다.
 
 ### 단계 B 완료

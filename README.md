@@ -68,6 +68,7 @@
 ./gradlew harnessFull
 ./gradlew knowledgeCheck
 ./gradlew knowledgeExport
+./gradlew evidenceCheck -PtargetProject=01-ledger-core
 ./gradlew promoteHarnessEvidence -PtargetProject=01-ledger-core
 ```
 
@@ -75,7 +76,8 @@
 - `harnessFast`: format, strict compile, unit, architecture, knowledge 검증
 - `harnessFull`: Fast와 PostgreSQL 18.6·Flyway·JPA·Boot·packaging 검증
 - `knowledgeExport`: `build/knowledge/knowledge.jsonl` 생성
-- `promoteHarnessEvidence`: clean HEAD의 성공한 Full manifest를 지정 프로젝트 evidence로 명시적으로 승격
+- `evidenceCheck`: 프로젝트 `MANIFEST.md`의 schema·artifact checksum·Git evidence 경계를 검증
+- `promoteHarnessEvidence`: clean HEAD의 성공한 Full manifest를 프로젝트의 `HARNESS_EVIDENCE.md` 보조 증거로 승격
 
 Windows에서는 `./gradlew` 대신 `gradlew.bat`를 사용합니다. Docker가 꺼져 있어도 Fast는 실행 가능하며 Full은 container test 전에 조치가 포함된 오류로 실패합니다.
 

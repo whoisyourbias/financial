@@ -2,6 +2,7 @@
 
 ## 인증과 격리
 
+- [ ] 공개 Basic wire 형식 `TP-WIRE-001`과 내부 credential 계약 `INT-AUTH-001`의 소유권·테스트가 분리된다.
 - [ ] HTTP Basic 인증의 선택 계약과 오류가 테스트된다.
 - [ ] 원문 시크릿은 발급 응답 이후 저장·로그되지 않는다.
 - [ ] 모든 결제·웹훅·정산 조회가 MID와 환경으로 격리된다.
@@ -13,7 +14,8 @@
 
 - [ ] 역할별 허용·거부 matrix가 자동 테스트된다.
 - [ ] 거부와 민감 변경에 actor, target, reason, trace가 남는다.
-- [ ] application API의 append-only 보장과 hash-chain 독립 검증을 모두 테스트하고 DB/root 변경은 탐지 대상이라는 신뢰 경계를 명시한다.
+- [ ] application API의 append-only 보장과 hash-chain 검증을 테스트하고, application·DB 밖에 고정한 서명 checkpoint 이후의 수정·삭제·순서 변경만 탐지 보장 범위로 명시한다.
+- [ ] 첫 checkpoint 전 변조, 서명 키 또는 외부 evidence target 침해는 탐지하지 못한다는 한계를 위협 모델과 결과에 남긴다.
 - [ ] secret/PII log scan과 의존성·정적 분석 결과가 보존된다.
 - [ ] live-simulated가 실제 라이브 망으로 오해되지 않게 표시된다.
 - [ ] rate limit의 주체·구간·한도와 정상·초과·우회 시나리오가 자동 테스트된다.

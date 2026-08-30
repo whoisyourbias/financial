@@ -13,8 +13,9 @@
 
 - [ ] shadow 실행이 원장·웹훅·응답 부작용을 만들지 않는다.
 - [ ] backfill이 재실행 가능하고 체크섬 검증을 통과한다.
-- [ ] 단일 MID canary의 진입·중단 임계치가 baseline 전에 고정되고 blocking/unknown diff 0, side effect 0, backfill checksum 100%를 만족한다.
-- [ ] canary 오류율 증가가 0.5%p 이하이고 p95 증가가 20% 이하이며, 어느 임계치든 초과하면 수동 롤백된다.
+- [ ] workload·표본 단위·반복 종료 조건·샘플 상점 SLO 기반 최대 허용 회귀 예산·신뢰구간 계산법이 baseline 전에 등록되고 blocking/unknown diff 0, side effect 0, backfill checksum 100%를 만족한다.
+- [ ] 같은 fixture 기준선의 반복값으로 오류율·p95 run-to-run 변동의 단측 95% 신뢰 상한을 계산하며, 이 상한이 최대 허용 회귀 예산보다 작지 않거나 표본이 부족하면 no-go로 처리한다.
+- [ ] candidate 회귀의 단측 95% 신뢰 상한이 고정된 최대 허용 회귀 예산을 넘으면 수동 롤백되고 baseline/candidate 원본·분자·분모·계산식이 보존된다.
 - [ ] 롤백 후 신규 엔진 결제도 조회·취소 가능하다.
 - [ ] 전환·롤백 훈련 타임라인과 원시 diff가 보존된다.
 - [ ] 합성 기준 구현을 실제 토스 레거시로 표현하지 않는다.
